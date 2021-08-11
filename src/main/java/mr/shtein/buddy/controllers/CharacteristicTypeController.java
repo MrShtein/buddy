@@ -22,7 +22,7 @@ public class CharacteristicTypeController {
         this.characteristicTypeService = characteristicTypeService;
     }
 
-    @GetMapping("/api/characteristic_types")
+    @GetMapping("/api/v1/characteristic_types")
     public ResponseEntity<List<CharacteristicType>> getAllCharacteristicTypes() {
         List<CharacteristicType> types = characteristicTypeService.getAllCharacteristicType();
         HttpHeaders headers = new HttpHeaders();
