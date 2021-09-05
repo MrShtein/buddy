@@ -7,26 +7,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@Table(name = "animal_type")
 @Entity
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@Table(name = "kennel")
-public class Kennel {
+public class AnimalType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "kennel_id")
-    private int id;
-    private String title;
-    private String city;
-    private int house;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-    private String email;
-
+    @Column(name = "animal_type_id")
+    private long id;
+    private String name;
 }
