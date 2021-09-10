@@ -39,7 +39,7 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "animal_id")
-    private long animalId;
+    private long id;
 
     @OneToOne
     @JoinColumn(name = "animal_type_id")
