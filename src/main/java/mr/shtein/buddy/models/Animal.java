@@ -67,9 +67,6 @@ public class Animal {
     private boolean isExist;
     private String description;
 
-    @Column(name = "photo")
-    private String photoUrl;
-
     @OneToOne
     @JoinColumn(name = "breed_id")
     private Breed breed;
@@ -81,5 +78,14 @@ public class Animal {
             inverseJoinColumns = {@JoinColumn(name = "characteristic_id")}
     )
     private List<Characteristic> characteristics = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "animal_photo",
+            joinColumns = {@JoinColumn(name = "animal_id")},
+            inverseJoinColumns = {@JoinColumn(name = "animal_photo_id")}
+    )
+    private List<AnimalPhoto> animalPhotos = new ArrayList<>();
+
 
 }
