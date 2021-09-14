@@ -26,4 +26,6 @@ public class AnimalType {
     @Column(name = "animal_type_id")
     private long id;
     private String name;
+    @Column(name = "plural_name")
+    private String pluralName;
 }
