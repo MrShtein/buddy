@@ -25,6 +25,12 @@ public class AnimalService {
         return animals;
     }
 
+    public Animal getAnimalById(Long id) {
+        return animalRepository
+                .findById(id)
+                .orElseThrow();
+    }
+
     public Boolean add(Animal animal) {
         try {
             animalRepository.save(animal);

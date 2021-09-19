@@ -13,7 +13,6 @@ import java.util.List;
 import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.models.AnimalTypeDTO;
 import mr.shtein.buddy.services.AnimalTypeService;
-import mr.shtein.buddy.viewmodel.AnimalDTO;
 
 @RestController
 @Validated

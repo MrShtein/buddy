@@ -3,7 +3,6 @@ package mr.shtein.buddy.viewmodel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.Data;
 import mr.shtein.buddy.models.Animal;
@@ -11,8 +10,9 @@ import mr.shtein.buddy.models.AnimalPhoto;
 import mr.shtein.buddy.models.Characteristic;
 
 @Data
-public class AnimalDTO {
+public class FullAnimalDTO {
     private long id;
+    private List<String> imgUrl = new ArrayList<>();
     private String spices;
     private String name;
     private String kennelName;
@@ -20,7 +20,8 @@ public class AnimalDTO {
     private int age;
     private String description;
     private String breed;
-    private List<AnimalPhotoDTO> imgUrl = new ArrayList<>();
+    private String kennelPhoneNumber;
+    private String kennelEmail;
     private HashMap<String, String> characteristics = new HashMap<>();
 
     public void from(Animal animal) {
@@ -32,6 +33,8 @@ public class AnimalDTO {
         age = animal.getApproximateAge();
         description = animal.getDescription();
         breed = animal.getBreed().getName();
+        kennelPhoneNumber = animal.getKennel().getPhoneNumber();
+        kennelEmail = animal.getKennel().getEmail();
 
         List<Characteristic> characteristicList = animal.getCharacteristics();
         for (Characteristic current : characteristicList) {
@@ -40,9 +43,7 @@ public class AnimalDTO {
 
         List<AnimalPhoto> photos = animal.getAnimalPhotos();
         photos.forEach(photo -> {
-            AnimalPhotoDTO current = new AnimalPhotoDTO();
-            current.from(photo);
-            imgUrl.add(current);
+            imgUrl.add(photo.getUrl());
         });
     }
 }
