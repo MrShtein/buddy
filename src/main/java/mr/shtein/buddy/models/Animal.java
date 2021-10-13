@@ -2,15 +2,11 @@ package mr.shtein.buddy.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -71,6 +67,10 @@ public class Animal {
     @JoinColumn(name = "breed_id")
     private Breed breed;
 
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "animal_characteristic",
@@ -86,6 +86,4 @@ public class Animal {
             inverseJoinColumns = {@JoinColumn(name = "animal_photo_id")}
     )
     private List<AnimalPhoto> animalPhotos = new ArrayList<>();
-
-
 }
