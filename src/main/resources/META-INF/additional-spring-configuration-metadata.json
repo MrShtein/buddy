@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "auth.cookie.refresh",
+      "type": "java.lang.String",
+      "description": "Description for auth.cookie.refresh."
+    }
+  ]
+}
