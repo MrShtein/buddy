@@ -62,7 +62,9 @@ public class AuthController {
             userInfo.setId(user.getId());
             userInfo.setRole(roleName);
             userInfo.setToken(token);
-            loginResponse.setToken(userInfo);
+            userInfo.setUserName(username);
+            userInfo.setIsLocked(user.getLocked());
+            loginResponse.setUserInfo(userInfo);
 
             return ResponseEntity.ok(loginResponse);
         } catch (Exception e) {

@@ -12,8 +12,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfo {
-    private String token;
     private Long id;
+    private String name;
+    private String surname;
+    private String phone;
+    private String token;
     private String userName;
     private String role;
+    private Boolean isLocked;
 }

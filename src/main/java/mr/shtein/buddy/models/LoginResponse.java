@@ -8,11 +8,11 @@ public class LoginResponse {
         error = "";
     }
 
-    public UserInfo getToken() {
+    public UserInfo getUserInfo() {
         return userInfo;
     }
 
-    public void setToken(UserInfo userInfo) {
+    public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
     }
 
