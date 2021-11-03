@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -15,16 +16,17 @@ import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@RequestMapping("/api/v1")
 public class PhotoController {
 
     @Autowired
     public PhotoController() {
     }
 
-    @GetMapping("/animalsPhoto/**")
+    @GetMapping("/animal/photo/**")
     public ResponseEntity<FileSystemResource> getAnimalPhoto(HttpServletRequest request) {
 
-        String url = request.getRequestURL().toString().split("/animalsPhoto/")[1];
+        String url = request.getRequestURL().toString().split("/animal/photo/")[1];
         String path = System.getProperty("user.home") + "/buddyPhotos/" + url;
         File file = new File(path);
         long fileLength = file.length();

@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtResponse {
+public class UserInfo {
     private String token;
     private Long id;
     private String userName;

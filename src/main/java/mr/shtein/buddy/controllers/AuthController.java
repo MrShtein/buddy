@@ -1,99 +1,74 @@
 package mr.shtein.buddy.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import mr.shtein.buddy.access.JwtTokenProvider;
-import mr.shtein.buddy.models.ErrorResponse;
+import mr.shtein.buddy.models.UserInfo;
 import mr.shtein.buddy.models.LoginRequest;
+import mr.shtein.buddy.models.LoginResponse;
 import mr.shtein.buddy.models.Person;
 import mr.shtein.buddy.models.RegistrationRequest;
-import mr.shtein.buddy.models.UserResponse;
-import mr.shtein.buddy.services.LoginService;
 import mr.shtein.buddy.services.RegistrationService;
+import mr.shtein.buddy.services.UserService;
 
 @RestController
 @ResponseBody
-@RequestMapping("api/v1/auth")
-@AllArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final RegistrationService registrationService;
-    private final LoginService loginService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
-    @PostMapping(path = "registration")
-    public ResponseEntity<?> registration(@RequestBody RegistrationRequest registrationRequest, HttpServletResponse response) {
+    @Autowired
+    public AuthController(RegistrationService registrationService, JwtTokenProvider jwtTokenProvider, UserService userService, AuthenticationManager authenticationManager) {
+        this.registrationService = registrationService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+    }
+
+    @PostMapping(path = "/registration")
+    public ResponseEntity<?> registration(@RequestBody RegistrationRequest registrationRequest) {
         try {
-            Person user = registrationService.register(registrationRequest);
-            setAuthToken(user, response);
-            setRefreshToken(user, response);
-            return buildUserResponse(user);
+            registrationService.register(registrationRequest);
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
             log.error(e.getLocalizedMessage());
-            clearAuthToken(response);
-            return buildErrorResponse(e.getLocalizedMessage());
+            return ResponseEntity.ok(false);
         }
     }
 
-    @PostMapping(path = "login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    @PostMapping(path = "/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest data) {
+        UserInfo userInfo = new UserInfo();
+        LoginResponse loginResponse = new LoginResponse();
         try {
-            Person user = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            setAuthToken(user, response);
-            setRefreshToken(user, response);
-            return buildUserResponse(user);
+            String username = data.getEmail();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
+            Person user = userService.loadUserByUsername(username);
+            String roleName = user.getRole().getRoleName();
+            String token = jwtTokenProvider.createAuthToken(username, roleName);
+            userInfo.setId(user.getId());
+            userInfo.setRole(roleName);
+            userInfo.setToken(token);
+            loginResponse.setToken(userInfo);
+
+            return ResponseEntity.ok(loginResponse);
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage());
-            clearAuthToken(response);
-            return buildErrorResponse(e.getLocalizedMessage());
+            loginResponse.setError("Не правильно введен логин или пароль");
+            return ResponseEntity.ok(loginResponse);
         }
     }
 
-    private void clearAuthToken(HttpServletResponse httpServletResponse) {
-        Cookie authCookie = new Cookie(jwtTokenProvider.getAuthCookieName(), "-");
-        authCookie.setPath(jwtTokenProvider.getCookiePath());
-
-        Cookie refreshCookie = new Cookie(jwtTokenProvider.getRefreshCookieName(), "-");
-        authCookie.setPath(jwtTokenProvider.getCookiePath());
-
-        httpServletResponse.addCookie(authCookie);
-        httpServletResponse.addCookie(refreshCookie);
-    }
-
-    private void setAuthToken(@NonNull Person user, HttpServletResponse httpServletResponse) {
-        String token = jwtTokenProvider.createAuthToken(user.getName(), user.getRole().getRoleName());
-        Cookie cookie = new Cookie(jwtTokenProvider.getAuthCookieName(), token);
-        cookie.setPath(jwtTokenProvider.getCookiePath());
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(jwtTokenProvider.getAuthExpiration());
-        httpServletResponse.addCookie(cookie);
-    }
-
-    private void setRefreshToken(@NonNull Person user, HttpServletResponse httpServletResponse) {
-        String token = jwtTokenProvider.createRefreshToken(user.getName(), user.getRole().getRoleName());
-        Cookie cookie = new Cookie(jwtTokenProvider.getRefreshCookieName(), token);
-        cookie.setPath(jwtTokenProvider.getCookiePath());
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(jwtTokenProvider.getRefreshExpiration());
-        httpServletResponse.addCookie(cookie);
-    }
-
-    private ResponseEntity<?> buildUserResponse(Person user) {
-        return ResponseEntity.ok(new UserResponse(user));
-    }
-
-    private ResponseEntity<?> buildErrorResponse(String message) {
-        return ResponseEntity.ok(new ErrorResponse(message));
-    }
 }

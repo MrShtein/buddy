@@ -28,8 +28,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "person")
 public class Person implements UserDetails {
 
@@ -46,9 +46,6 @@ public class Person implements UserDetails {
 
     @Column(name = "password")
     private String password;
-
-    @Column(name = "salt")
-    private String salt;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -70,6 +67,14 @@ public class Person implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());
         return Collections.singletonList(authority);
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
@@ -103,7 +108,6 @@ public class Person implements UserDetails {
     }
 
     public Person(RegistrationRequest registrationRequest) {
-        this.name = registrationRequest.getName();
         this.email = registrationRequest.getEmail();
         this.password = registrationRequest.getPassword();
         this.setEnabled(true);

@@ -12,13 +12,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class UserResponse extends BaseResponse {
-    private String name;
     private String email;
     private boolean enabled;
 
     public UserResponse(Person user) {
-        this.name = user.getName();
         this.email = user.getEmail();
-        this.enabled = user.isEnabled();
     }
 }
