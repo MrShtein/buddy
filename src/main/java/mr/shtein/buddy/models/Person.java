@@ -44,6 +44,9 @@ public class Person implements UserDetails {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "surname")
+    private String surname;
+
     @Column(name = "password")
     private String password;
 
@@ -110,6 +113,7 @@ public class Person implements UserDetails {
     public Person(RegistrationRequest registrationRequest) {
         this.email = registrationRequest.getEmail();
         this.password = registrationRequest.getPassword();
+        this.name = registrationRequest.getName();
         this.setEnabled(true);
     }
 }

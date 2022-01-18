@@ -59,11 +59,16 @@ public class AuthController {
             Person user = userService.loadUserByUsername(username);
             String roleName = user.getRole().getRoleName();
             String token = jwtTokenProvider.createAuthToken(username, roleName);
+
             userInfo.setId(user.getId());
             userInfo.setRole(roleName);
             userInfo.setToken(token);
-            userInfo.setUserName(username);
+            userInfo.setLogin(username);
             userInfo.setIsLocked(user.getLocked());
+            userInfo.setLogin(username);
+            userInfo.setName(getNotNullValue(user.getName()));
+            userInfo.setSurname(getNotNullValue(user.getSurname()));
+            userInfo.setPhone(getNotNullValue(user.getPhoneNumber()));
             loginResponse.setUserInfo(userInfo);
 
             return ResponseEntity.ok(loginResponse);
@@ -71,6 +76,10 @@ public class AuthController {
             loginResponse.setError("Не правильно введен логин или пароль");
             return ResponseEntity.ok(loginResponse);
         }
+    }
+
+    private String getNotNullValue(String value) {
+        return value == null ? "" : value;
     }
 
 }
