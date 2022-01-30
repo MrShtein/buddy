@@ -1,19 +1,19 @@
 package mr.shtein.buddy.models;
 
 public class LoginResponse {
-    private UserInfo userInfo;
+    private LoginInfo loginInfo;
     private String error;
 
     public LoginResponse() {
         error = "";
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public LoginInfo getLoginInfo() {
+        return loginInfo;
     }
 
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
+    public void setLoginInfo(LoginInfo loginInfo) {
+        this.loginInfo = loginInfo;
     }
 
     public String getError() {

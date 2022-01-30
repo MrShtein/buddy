@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1/animal/photo/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/animal/types").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/animal/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/user").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

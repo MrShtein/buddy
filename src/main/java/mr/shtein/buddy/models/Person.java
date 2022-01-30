@@ -66,6 +66,13 @@ public class Person implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    @Column(name = "gender")
+    private String gender;
+
+    @OneToOne
+    @JoinColumn(name = "city")
+    private City city;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getRoleName());

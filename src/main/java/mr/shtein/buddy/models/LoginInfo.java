@@ -11,11 +11,11 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfo {
+public class LoginInfo {
     private Long id;
-    private String name = "";
-    private String surname = "";
-    private String phone = "";
+    private String name;
+    private String surname;
+    private String phone;
     private String token;
     private String login;
     private String role;

@@ -10,34 +10,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import mr.shtein.buddy.models.Animal;
-import mr.shtein.buddy.services.AnimalService;
-import mr.shtein.buddy.services.UserService;
-import mr.shtein.buddy.viewmodel.FullAnimalDTO;
-import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
+import mr.shtein.buddy.models.PersonRequest;
+import mr.shtein.buddy.models.PersonResponse;
+import mr.shtein.buddy.services.PersonService;
 
 @RestController
 @Validated
 public class UserController {
 
-    private final UserService userService;
+    private final PersonService personService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(PersonService personService) {
+        this.personService = personService;
     }
 
     @GetMapping("/api/v1/email/exists/{email}")
     public ResponseEntity<Boolean> getAnimalsByFilter(@PathVariable String email) {
-        Boolean isExists = userService.isEmailExists(email);
+        Boolean isExists = personService.isEmailExists(email);
         return new ResponseEntity<>(isExists, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/v1/user")
+    public ResponseEntity<?> setUserInfo(@RequestBody PersonRequest person) {
+        PersonResponse personResponse = personService.setUserInfo(person);
+        return new ResponseEntity<>(personResponse, HttpStatus.OK);
     }
 }

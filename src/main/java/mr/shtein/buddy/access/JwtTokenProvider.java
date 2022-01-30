@@ -12,29 +12,26 @@ import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import mr.shtein.buddy.exception.InvalidJwtAuthenticationException;
-import mr.shtein.buddy.models.Person;
-import mr.shtein.buddy.services.UserService;
+import mr.shtein.buddy.services.PersonService;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private final UserService userService;
+    private final PersonService personService;
 
     @Autowired
-    public JwtTokenProvider(UserService userService) {
-        this.userService = userService;
+    public JwtTokenProvider(PersonService personService) {
+        this.personService = personService;
     }
 
     @Value("${auth.secret}")
@@ -44,14 +41,14 @@ public class JwtTokenProvider {
     private String authName;
 
     @Value("${auth.expiration-auth}")
-    private Integer authExpiration;
+    private Long authExpiration;
 
     @PostConstruct
     public void init() {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public Integer getAuthExpiration() {
+    public Long getAuthExpiration() {
         return authExpiration;
     }
 
@@ -69,7 +66,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.userService.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = this.personService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
