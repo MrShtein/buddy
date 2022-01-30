@@ -30,6 +30,7 @@ public class CityController {
         try {
             List<CityDTO> cities = cityService.getAllCities();
             cityResponse.setCitiesList(cities);
+            cityResponse.setError("");
         } catch (Exception e) {
             cityResponse.setError(e.getMessage());
         }
