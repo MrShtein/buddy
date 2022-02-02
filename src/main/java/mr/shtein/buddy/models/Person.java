@@ -70,7 +70,7 @@ public class Person implements UserDetails {
     private String gender;
 
     @OneToOne
-    @JoinColumn(name = "city")
+    @JoinColumn(name = "address")
     private City city;
 
     @Override

@@ -14,6 +14,7 @@ import mr.shtein.buddy.models.PersonRequest;
 import mr.shtein.buddy.models.PersonResponse;
 import mr.shtein.buddy.repository.CityRepository;
 import mr.shtein.buddy.repository.UserRepository;
+import mr.shtein.buddy.request.EmailCheckRequest;
 
 @Service
 public class PersonService implements UserDetailsService {
@@ -34,9 +35,9 @@ public class PersonService implements UserDetailsService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public Boolean isEmailExists(String email) {
-        Person user = userRepository.findByEmail(email).orElse(null);
-        return user != null;
+    public Boolean isEmailExists(EmailCheckRequest emailCheckRequest) {
+        Person user = userRepository.findByEmail(emailCheckRequest.getEmail()).orElse(null);
+        return user != null && user.getId() != emailCheckRequest.getPersonId();
     }
 
     public Person signUpUser(Person person) {
