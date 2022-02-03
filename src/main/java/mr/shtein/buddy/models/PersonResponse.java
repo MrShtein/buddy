@@ -14,5 +14,6 @@ import lombok.ToString;
 @ToString
 public class PersonResponse extends BaseResponse {
     private Boolean isUpgrade;
+    private String newToken;
     private ErrorResponse error;
 }

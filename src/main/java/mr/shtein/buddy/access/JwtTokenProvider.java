@@ -27,10 +27,10 @@ import mr.shtein.buddy.services.PersonService;
 @Slf4j
 public class JwtTokenProvider {
 
-    private final PersonService personService;
+    private PersonService personService;
 
     @Autowired
-    public JwtTokenProvider(PersonService personService) {
+    public void setPersonService(PersonService personService) {
         this.personService = personService;
     }
 

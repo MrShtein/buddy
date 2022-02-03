@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import mr.shtein.buddy.access.JwtTokenProvider;
 import mr.shtein.buddy.models.City;
 import mr.shtein.buddy.models.ErrorResponse;
 import mr.shtein.buddy.models.Person;
@@ -22,12 +23,15 @@ public class PersonService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public PersonService(UserRepository userRepository, CityRepository cityRepository, PasswordEncoder passwordEncoder) {
+    public PersonService(UserRepository userRepository, CityRepository cityRepository,
+                         PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -72,14 +76,24 @@ public class PersonService implements UserDetailsService {
 
         person.setCity(city);
         person.setPhoneNumber(personRequest.getPhoneNumber());
-        person.setEmail(personRequest.getEmail());
+
+        PersonResponse personResponse = new PersonResponse();
+
+        if (person.getEmail().equals(personRequest.getEmail())) {
+            personResponse.setNewToken("");
+        } else {
+            String newLogin = personRequest.getEmail();
+            String newToken = jwtTokenProvider.createAuthToken(newLogin, person.getRole().getRoleName());
+            personResponse.setNewToken(newToken);
+            person.setEmail(personRequest.getEmail());
+        }
+
 
         if (!"".equals(personRequest.getPassword())) {
             String encodedPwd = passwordEncoder.encode(personRequest.getPassword());
             person.setPassword(encodedPwd);
         }
 
-        PersonResponse personResponse = new PersonResponse();
         try {
             userRepository.save(person);
             personResponse.setIsUpgrade(true);
