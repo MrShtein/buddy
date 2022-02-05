@@ -71,6 +71,7 @@ public class AuthController {
             loginInfo.setName(getNotNullValue(user.getName()));
             loginInfo.setSurname(getNotNullValue(user.getSurname()));
             loginInfo.setPhone(getNotNullValue(user.getPhoneNumber()));
+            loginInfo.setGender(getNotNullValue(user.getGender()));
             loginResponse.setLoginInfo(loginInfo);
 
             return ResponseEntity.ok(loginResponse);

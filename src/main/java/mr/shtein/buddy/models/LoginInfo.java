@@ -19,6 +19,7 @@ public class LoginInfo {
     private String token;
     private String login;
     private String role;
+    private String gender;
     private Boolean isLocked;
 
 }
