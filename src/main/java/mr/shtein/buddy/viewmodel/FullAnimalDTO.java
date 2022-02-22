@@ -28,7 +28,7 @@ public class FullAnimalDTO {
         id = animal.getId();
         spices = animal.getType().getName();
         name = animal.getName();
-        kennelName = animal.getKennel().getTitle();
+        kennelName = animal.getKennel().getName();
         gender = animal.getGender().getGender_type();
         age = animal.getApproximateAge();
         description = animal.getDescription();
