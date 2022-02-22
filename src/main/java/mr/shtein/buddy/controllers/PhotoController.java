@@ -1,6 +1,8 @@
 package mr.shtein.buddy.controllers;
 
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/v1")
 public class PhotoController {
 
+    @Value("${path.photo}")
+    private String pathToBuddyPhotos;
+    @Value("${path.animal}")
+    private String pathToAnimals;
+
     @Autowired
     public PhotoController() {
     }
@@ -27,7 +34,7 @@ public class PhotoController {
     public ResponseEntity<FileSystemResource> getAnimalPhoto(HttpServletRequest request) {
 
         String url = request.getRequestURL().toString().split("/animal/photo/")[1];
-        String path = System.getProperty("user.home") + "/buddyPhotos/" + url;
+        String path = System.getProperty("user.home") + pathToBuddyPhotos + pathToAnimals + url;
         File file = new File(path);
         long fileLength = file.length();
 
@@ -40,4 +47,6 @@ public class PhotoController {
                 new FileSystemResource(file), respHeader, HttpStatus.OK
         );
     }
+
+
 }
