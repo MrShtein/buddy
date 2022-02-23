@@ -15,12 +15,14 @@ import javax.servlet.http.Part;
 
 import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.repository.KennelRepository;
+import mr.shtein.buddy.request.KennelPreviewResponse;
 import mr.shtein.buddy.request.KennelRequest;
 
 @Service
 public class KennelService {
 
     private final KennelRepository kennelRepository;
+    private final AnimalService animalService;
     private final FilesStorageService filesStorageService;
     private final String DEFAULT_AVT_NAME = "default.jpeg";
 
@@ -28,9 +30,10 @@ public class KennelService {
 
     public KennelService(
             KennelRepository kennelRepository,
-            FilesStorageService filesStorageService
+            AnimalService animalService, FilesStorageService filesStorageService
     ) {
         this.kennelRepository = kennelRepository;
+        this.animalService = animalService;
         this.filesStorageService = filesStorageService;
     }
 
@@ -82,7 +85,30 @@ public class KennelService {
     }
 
 
-    public ArrayList<Kennel> getKennelsByPersonId(int personId)  {
-        return new ArrayList<>();
+    public ArrayList<KennelPreviewResponse> getKennelsByPersonId(Long personId) {
+        Iterable<Kennel> kennelsTmp = kennelRepository.findAllByAdministratorID(personId);
+        ArrayList<KennelPreviewResponse> kennelsList = new ArrayList<>();
+        kennelsTmp.forEach(kennel -> {
+            int animalsAmount = animalService.countAllAnimalByKennelId(kennel.getId());
+            int volunteersAmount = kennel.getVolunteers().size();
+            kennelsList.add(makeKennelPreviewResponse(
+                    animalsAmount, volunteersAmount, kennel
+            ));
+
+        });
+        return kennelsList;
+    }
+
+    private KennelPreviewResponse makeKennelPreviewResponse(
+            int animalsAmount, int volunteersAmount, Kennel kennel
+    ) {
+        KennelPreviewResponse kennelPreviewResponse = new KennelPreviewResponse();
+        kennelPreviewResponse.setKennelId(kennel.getId());
+        kennelPreviewResponse.setName(kennel.getName());
+        kennelPreviewResponse.setAnimalsAmount(animalsAmount);
+        kennelPreviewResponse.setVolunteersAmount(volunteersAmount);
+        kennelPreviewResponse.setIsValid(kennel.getIsValid());
+        kennelPreviewResponse.setAvatarUrl(kennel.getAvatarUri());
+        return kennelPreviewResponse;
     }
 }

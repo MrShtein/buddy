@@ -41,5 +41,9 @@ public class AnimalService {
         }
     }
 
+    public int countAllAnimalByKennelId(int kennelId) {
+        return animalRepository.countAllByKennelId(kennelId);
+    }
+
 
 }
