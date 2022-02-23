@@ -53,6 +53,9 @@ public class Kennel {
     @Column(name = "is_valid", nullable = false)
     private Boolean isValid = false;
 
+    @Column(name = "administrator_id", nullable = false)
+    private Long administratorID;
+
 
 
 }

@@ -14,8 +14,6 @@ import java.util.Optional;
 import javax.servlet.http.Part;
 
 import mr.shtein.buddy.models.Kennel;
-import mr.shtein.buddy.models.KennelAdministrator;
-import mr.shtein.buddy.repository.KennelAdministratorRepository;
 import mr.shtein.buddy.repository.KennelRepository;
 import mr.shtein.buddy.request.KennelRequest;
 
@@ -23,7 +21,6 @@ import mr.shtein.buddy.request.KennelRequest;
 public class KennelService {
 
     private final KennelRepository kennelRepository;
-    private final KennelAdministratorRepository kennelAdministratorRepository;
     private final FilesStorageService filesStorageService;
     private final String DEFAULT_AVT_NAME = "default.jpeg";
 
@@ -31,11 +28,9 @@ public class KennelService {
 
     public KennelService(
             KennelRepository kennelRepository,
-            KennelAdministratorRepository kennelAdministratorRepository,
             FilesStorageService filesStorageService
     ) {
         this.kennelRepository = kennelRepository;
-        this.kennelAdministratorRepository = kennelAdministratorRepository;
         this.filesStorageService = filesStorageService;
     }
 
@@ -62,11 +57,6 @@ public class KennelService {
         Kennel kennel = makeKennel(kennelRequest, avtName);
         kennelRepository.save(kennel);
 
-        KennelAdministrator kennelAdministrator = new KennelAdministrator();
-        kennelAdministrator.setPersonId(kennelRequest.getUserId());
-        kennelAdministrator.setKennelId(kennel.getId());
-        kennelAdministratorRepository.save(kennelAdministrator);
-
         return true;
     }
 
@@ -86,9 +76,13 @@ public class KennelService {
         kennel.setEmail(kennelRequest.getKennelEmail());
         kennel.setBuilding(kennelRequest.getKennelBuildingNum());
         kennel.setIdentifyNum(kennelRequest.getKennelIdentifyNum());
+        kennel.setAdministratorID(kennelRequest.getUserId());
         kennel.setIsValid(false);
         return kennel;
     }
 
 
+    public ArrayList<Kennel> getKennelsByPersonId(int personId)  {
+        return new ArrayList<>();
+    }
 }
