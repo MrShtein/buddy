@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.servlet.http.Part;
 
+import mr.shtein.buddy.models.Avatar;
 import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.repository.KennelRepository;
 import mr.shtein.buddy.request.KennelPreviewResponse;
@@ -82,6 +84,14 @@ public class KennelService {
         kennel.setAdministratorID(kennelRequest.getUserId());
         kennel.setIsValid(false);
         return kennel;
+    }
+
+    public Avatar getAvatar(String address) throws NoSuchFileException {
+        try {
+          return filesStorageService.getKennelAvatar(address);
+        } catch (IOException exception) {
+            throw new NoSuchFileException("Не удалось найти аватар с таким именем");
+        }
     }
 
 

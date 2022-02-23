@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import mr.shtein.buddy.exception.IllegalRequestDataException;
+import mr.shtein.buddy.models.Avatar;
 import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.request.KennelRequest;
 import mr.shtein.buddy.response.KennelResponse;
@@ -41,6 +43,7 @@ import mr.shtein.buddy.services.KennelService;
 public class KennelController {
 
     private final KennelService kennelService;
+
 
 
     @Autowired
@@ -54,7 +57,7 @@ public class KennelController {
         return kennelService.getKennelById(id);
     }
 
-    @PostMapping(path = "/api/v1/kennel", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+        @PostMapping(path = "/api/v1/kennel", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Boolean> addNewKennel(HttpServletRequest servletRequest) {
         try {
             ArrayList<Part> requestParts = new ArrayList<>(servletRequest.getParts());
@@ -65,6 +68,15 @@ public class KennelController {
         } catch (IOException exception) {
             throw new IllegalRequestDataException();
         }
+    }
+
+    @GetMapping("/api/v1/kennel/avatar/{address}")
+    public ResponseEntity<byte[]> getKennelAvatar(@PathVariable String address) throws NoSuchFileException {
+        Avatar avatar = kennelService.getAvatar(address);
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(avatar.getContentType()))
+                .body(avatar.getData());
     }
 
 

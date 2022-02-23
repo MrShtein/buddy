@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import javax.servlet.http.Part;
 
+import mr.shtein.buddy.models.Avatar;
+
 @Service
 public class FilesStorageService {
 
@@ -32,7 +34,14 @@ public class FilesStorageService {
                 fileExtension;
         Path avatarImgSavePath = Path.of(pathBuilder);
         Files.copy(avatarPart.getInputStream(), avatarImgSavePath, StandardCopyOption.REPLACE_EXISTING);
-        return uniqueFileName + fileExtension;
+        return uniqueFileName + "." + fileExtension;
+    }
+
+    public Avatar getKennelAvatar(String address) throws IOException {
+        Path path = Path.of(System.getProperty("user.home") + imagesPath + kennelAvatarPath + address);
+        String contentType = Files.probeContentType(path);
+        byte[] data = Files.readAllBytes(path);
+        return new Avatar(contentType, data);
     }
 
 }

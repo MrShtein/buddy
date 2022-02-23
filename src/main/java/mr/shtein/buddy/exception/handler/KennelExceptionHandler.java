@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
+import java.nio.file.NoSuchFileException;
+
 import mr.shtein.buddy.exception.IllegalRequestDataException;
 import mr.shtein.buddy.exception.NoSuchKennelException;
 import mr.shtein.buddy.response.KennelIncorrectDataResponse;
@@ -25,6 +27,12 @@ public class KennelExceptionHandler {
         KennelIncorrectDataResponse response = new KennelIncorrectDataResponse();
         response.setMessage(WRONG_DATA_IN_KENNEL_ADDING);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<KennelIncorrectDataResponse> handleException(NoSuchFileException exception) {
+        KennelIncorrectDataResponse response = new KennelIncorrectDataResponse();
+        response.setMessage(exception.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }
