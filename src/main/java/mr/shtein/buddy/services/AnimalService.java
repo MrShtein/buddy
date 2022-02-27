@@ -25,6 +25,13 @@ public class AnimalService {
         return animals;
     }
 
+    public List<Animal> getAnimalByKennelId(Integer kennelId, Long animalType) {
+        Iterable<Animal> animalsIter = animalRepository.findAllByTypeIdAndKennelId(animalType, kennelId);
+        ArrayList<Animal> animals = new ArrayList<>();
+        animalsIter.forEach(animals::add);
+        return animals;
+    }
+
     public Animal getAnimalById(Long id) {
         return animalRepository
                 .findById(id)

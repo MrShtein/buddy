@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.repository.AnimalTypeRepository;
 
@@ -23,5 +24,9 @@ public class AnimalTypeService {
         ArrayList<AnimalType> animals = new ArrayList<>();
         animalsIter.forEach(animals::add);
         return animals;
+    }
+
+    public AnimalType getAnimalTypeByName(String animalType) {
+        return animalTypeRepository.findAnimalTypeByPluralName(animalType);
     }
 }

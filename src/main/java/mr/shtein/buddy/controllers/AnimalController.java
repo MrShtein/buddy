@@ -3,7 +3,6 @@ package mr.shtein.buddy.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,17 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import mr.shtein.buddy.models.Animal;
+import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.services.AnimalService;
+import mr.shtein.buddy.services.AnimalTypeService;
 import mr.shtein.buddy.viewmodel.FullAnimalDTO;
 import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 
@@ -32,10 +28,12 @@ import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 public class AnimalController {
 
     private final AnimalService animalService;
+    private final AnimalTypeService animalTypeService;
 
     @Autowired
-    public AnimalController(AnimalService animalService) {
+    public AnimalController(AnimalService animalService, AnimalTypeService animalTypeService) {
         this.animalService = animalService;
+        this.animalTypeService = animalTypeService;
     }
 
     @GetMapping("/animals")
@@ -58,13 +56,22 @@ public class AnimalController {
         return new ResponseEntity<>(fullAnimalDTO, HttpStatus.OK);
     }
 
-//    @GetMapping("/photo/{id}")
-//    public String getPhoto(@PathVariable String id) throws IOException {
-//        String address = System.getProperty("user.home") + "/buddyPhotos/" + id + "/";
-//        List<Path> files = Files.list(Paths.get(address)).collect(Collectors.toList());
-//        files.stream().forEach(x -> System.out.println(x.getFileName()));
-//        return "Ok";
-//    }
+    @GetMapping("animal/kennel/{kennel_id}/{animal_type}")
+    public ResponseEntity<List<MiniAnimalDTO>> getAnimalsByKennel(
+            @PathVariable("kennel_id") Integer kennelId,
+            @PathVariable("animal_type") String animalType
+            ) {
+        AnimalType animalTypeNum = animalTypeService.getAnimalTypeByName(animalType);
+        List<Animal> animals = animalService.getAnimalByKennelId(kennelId, animalTypeNum.getId());
+        ArrayList<MiniAnimalDTO> miniAnimalsDTOList = new ArrayList<>();
+        animals.forEach(animal -> {
+            MiniAnimalDTO miniAnimalDTO = new MiniAnimalDTO();
+            miniAnimalDTO.from(animal);
+            miniAnimalsDTOList.add(miniAnimalDTO);
+        });
+        return new ResponseEntity<>(miniAnimalsDTOList, HttpStatus.OK);
+    }
+
 
     @PostMapping("/animal")
     public ResponseEntity<Boolean> addAnimal(@RequestBody Animal animal) {
