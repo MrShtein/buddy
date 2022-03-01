@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
@@ -30,10 +31,9 @@ public class PhotoController {
     public PhotoController() {
     }
 
-    @GetMapping("/animal/photo/**")
-    public ResponseEntity<FileSystemResource> getAnimalPhoto(HttpServletRequest request) {
+    @GetMapping("/animal/photo/")
+    public ResponseEntity<FileSystemResource> getAnimalPhoto( @RequestParam String url) {
 
-        String url = request.getRequestURL().toString().split("/animal/photo/")[1];
         String path = System.getProperty("user.home") + pathToBuddyPhotos + pathToAnimals + url;
         File file = new File(path);
         long fileLength = file.length();
