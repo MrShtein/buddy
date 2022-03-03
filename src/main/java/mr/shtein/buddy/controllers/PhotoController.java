@@ -31,10 +31,15 @@ public class PhotoController {
     public PhotoController() {
     }
 
-    @GetMapping("/animal/photo/")
-    public ResponseEntity<FileSystemResource> getAnimalPhoto( @RequestParam String url) {
+    @GetMapping("/animal/photo/{creation_date}/{file_name}")
+    public ResponseEntity<FileSystemResource> getAnimalPhoto(
+            @PathVariable("creation_date") String creationDate,
+            @PathVariable("file_name") String fileName
+    ) {
 
-        String path = System.getProperty("user.home") + pathToBuddyPhotos + pathToAnimals + url;
+        String path =
+                System.getProperty("user.home") +
+                        pathToBuddyPhotos + pathToAnimals + creationDate + "/" + fileName;
         File file = new File(path);
         long fileLength = file.length();
 
