@@ -17,8 +17,11 @@ import java.util.List;
 
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalType;
+import mr.shtein.buddy.models.AnimalTypeDTO;
 import mr.shtein.buddy.services.AnimalService;
 import mr.shtein.buddy.services.AnimalTypeService;
+import mr.shtein.buddy.services.BreedService;
+import mr.shtein.buddy.viewmodel.BreedDTO;
 import mr.shtein.buddy.viewmodel.FullAnimalDTO;
 import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 
@@ -29,14 +32,16 @@ public class AnimalController {
 
     private final AnimalService animalService;
     private final AnimalTypeService animalTypeService;
+    private final BreedService breedService;
 
     @Autowired
-    public AnimalController(AnimalService animalService, AnimalTypeService animalTypeService) {
+    public AnimalController(AnimalService animalService, AnimalTypeService animalTypeService, BreedService breedService) {
         this.animalService = animalService;
         this.animalTypeService = animalTypeService;
+        this.breedService = breedService;
     }
 
-    @GetMapping("/animals")
+    @GetMapping("/animal")
     public ResponseEntity<List<MiniAnimalDTO>> getAnimalsByFilter() {
         List<Animal> animals = animalService.getAll();
         List<MiniAnimalDTO> animalsDTO = new ArrayList<>();
@@ -77,6 +82,24 @@ public class AnimalController {
     public ResponseEntity<Boolean> addAnimal(@RequestBody Animal animal) {
         Boolean response = animalService.add(animal);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/animal/type")
+    public ResponseEntity<List<AnimalTypeDTO>> getAnimalTypes() {
+        List<AnimalType> animalTypes = animalTypeService.getAllAnimalTypes();
+        List<AnimalTypeDTO> animalTypesDTO = new ArrayList<>();
+        for (AnimalType animalType : animalTypes) {
+            AnimalTypeDTO currentType = new AnimalTypeDTO();
+            currentType.from(animalType);
+            animalTypesDTO.add(currentType);
+        }
+        return new ResponseEntity<>(animalTypesDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/animal/{animal_type}/breed")
+    public ResponseEntity<List<BreedDTO>> getAnimalBreedByAnimalType(@PathVariable(name = "animal_type") String animalType) {
+        List<BreedDTO> breedDTOS = breedService.getBreedsByAnimalType(animalType);
+        return new ResponseEntity<>(breedDTOS, HttpStatus.OK);
     }
 
 
