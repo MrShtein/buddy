@@ -27,6 +27,7 @@ public class KennelService {
     private final AnimalService animalService;
     private final FilesStorageService filesStorageService;
     private final String DEFAULT_AVT_NAME = "default.jpeg";
+    private final String NEW_ROLE_TXT = "ROLE_ADMIN";
 
     @Autowired
 

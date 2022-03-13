@@ -22,6 +22,7 @@ public class KennelRequest {
     private String kennelHouseNum;
     private String kennelBuildingNum;
     private Long kennelIdentifyNum;
+    private String role;
 }
 
 
