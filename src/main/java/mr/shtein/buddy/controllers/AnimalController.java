@@ -66,7 +66,7 @@ public class AnimalController {
             @PathVariable("kennel_id") Integer kennelId,
             @PathVariable("animal_type") String animalType
             ) {
-        AnimalType animalTypeNum = animalTypeService.getAnimalTypeByName(animalType);
+        AnimalType animalTypeNum = animalTypeService.getAnimalTypeByPluralName(animalType);
         List<Animal> animals = animalService.getAnimalByKennelId(kennelId, animalTypeNum.getId());
         ArrayList<MiniAnimalDTO> miniAnimalsDTOList = new ArrayList<>();
         animals.forEach(animal -> {

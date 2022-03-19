@@ -26,7 +26,11 @@ public class AnimalTypeService {
         return animals;
     }
 
-    public AnimalType getAnimalTypeByName(String animalType) {
+    public AnimalType getAnimalTypeByPluralName(String animalType) {
         return animalTypeRepository.findAnimalTypeByPluralName(animalType);
+    }
+
+    public AnimalType getAnimalTypeByName(String name) {
+        return animalTypeRepository.findAnimalTypeByName(name);
     }
 }

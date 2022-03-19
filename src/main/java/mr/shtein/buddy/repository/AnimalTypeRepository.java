@@ -9,4 +9,5 @@ import mr.shtein.buddy.models.AnimalType;
 
 public interface AnimalTypeRepository extends CrudRepository<AnimalType, Long> {
     AnimalType findAnimalTypeByPluralName(String pluralName);
+    AnimalType findAnimalTypeByName(String name);
 }
