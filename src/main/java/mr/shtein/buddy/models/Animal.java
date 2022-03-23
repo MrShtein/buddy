@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -26,7 +28,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "animal")
@@ -46,6 +47,7 @@ public class Animal {
     @JoinColumn(name = "gender_id")
     private Gender gender;
 
+    //animal age in months
     @Column(name = "approximate_age")
     private int approximateAge;
 
@@ -79,11 +81,10 @@ public class Animal {
     )
     private List<Characteristic> characteristics = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "animal_photo",
-            joinColumns = {@JoinColumn(name = "animal_id")},
-            inverseJoinColumns = {@JoinColumn(name = "animal_photo_id")}
-    )
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
     private List<AnimalPhoto> animalPhotos = new ArrayList<>();
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

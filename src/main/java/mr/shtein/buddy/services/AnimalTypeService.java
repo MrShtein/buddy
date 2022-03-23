@@ -33,4 +33,8 @@ public class AnimalTypeService {
     public AnimalType getAnimalTypeByName(String name) {
         return animalTypeRepository.findAnimalTypeByName(name);
     }
+
+    public AnimalType getAnimalTypeById(Integer animalTypeId) {
+        return animalTypeRepository.findById(animalTypeId).get();
+    }
 }

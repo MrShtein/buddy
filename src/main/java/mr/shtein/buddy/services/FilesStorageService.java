@@ -1,37 +1,59 @@
 package mr.shtein.buddy.services;
 
+import org.hibernate.exception.DataException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.servlet.http.Part;
 
+import lombok.Setter;
 import mr.shtein.buddy.models.Avatar;
 
 @Service
 public class FilesStorageService {
 
-    @Value("${path.photo}")
+    private String mainPath = System.getProperty("user.home");
     private String imagesPath;
-    @Value("${path.avatar.kennel}")
     private String kennelAvatarPath;
-    @Value("${path.avatar.person}")
     private String personAvatarPath;
+    private String animalPath;
+
+    @Autowired
+    public FilesStorageService(
+            @Value("${path.photo}") String imagesPath,
+            @Value("${path.avatar.kennel}") String kennelAvatarPath,
+            @Value("${path.avatar.person}") String personAvatarPath,
+            @Value("${path.animal}") String animalPath
+    ) {
+        this.imagesPath = imagesPath;
+        this.kennelAvatarPath = kennelAvatarPath;
+        this.personAvatarPath = personAvatarPath;
+        this.animalPath = animalPath;
+    }
 
     public String addNewKennelAvatar(Part avatarPart) throws IOException {
         String uniqueFileName = UUID.randomUUID().toString();
         String fileExtension = avatarPart.getContentType().split("/")[1];
-        String pathBuilder = System.getProperty("user.home") +
-                imagesPath +
-                kennelAvatarPath +
-                uniqueFileName + "." +
-                fileExtension;
+        String pathBuilder =
+                mainPath +
+                        imagesPath +
+                        kennelAvatarPath +
+                        uniqueFileName + "." +
+                        fileExtension;
         Path avatarImgSavePath = Path.of(pathBuilder);
         Files.copy(avatarPart.getInputStream(), avatarImgSavePath, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName + "." + fileExtension;
@@ -42,6 +64,34 @@ public class FilesStorageService {
         String contentType = Files.probeContentType(path);
         byte[] data = Files.readAllBytes(path);
         return new Avatar(contentType, data);
+    }
+
+    public ArrayList<String> addNewAnimalImages(MultipartFile[] files) {
+        String currentDate = LocalDate.now().toString();
+        ArrayList<String> paths = new ArrayList<>();
+        Arrays.stream(files)
+                .forEach(file -> {
+                    String fileName = UUID.randomUUID().toString();
+                    String fileExtension = Objects.requireNonNull(file.getContentType()).split("/")[1];
+                    String pathForNewFolder = mainPath + imagesPath + animalPath;
+                    makeDirectoryIfNotExist(pathForNewFolder);
+                    String pathForDb = currentDate + "/" + fileName + "." + fileExtension;
+                    String pathForFile = pathForNewFolder + "/" + pathForDb;
+                    paths.add(pathForDb);
+                    try {
+                        Files.copy(file.getInputStream(), Path.of(pathForFile), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                });
+        return paths;
+    }
+
+    private void makeDirectoryIfNotExist(String path) {
+        File folder = new File(path);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
     }
 
 }

@@ -34,4 +34,8 @@ public class BreedService {
         });
         return breedDTOs;
     }
+
+    public Breed getBreedById(Integer breedId) {
+        return breedRepository.findById(breedId).get();
+    }
 }

@@ -8,6 +8,6 @@ import mr.shtein.buddy.models.Animal;
 
 public interface AnimalRepository extends CrudRepository<Animal, Long> {
     List<Animal> findAllByOrderByIdAsc();
-    List<Animal> findAllByTypeIdAndKennelId(int animalTypeId, Integer kennelId);
+    List<Animal> findAllByTypeIdAndKennelId(Integer animalTypeId, Integer kennelId);
     Integer countAllByKennelId(int kennelId);
 }

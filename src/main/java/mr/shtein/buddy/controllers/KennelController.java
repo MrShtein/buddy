@@ -57,7 +57,7 @@ public class KennelController {
         return kennelService.getKennelById(id);
     }
 
-        @PostMapping(path = "/api/v1/kennel", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+        @PostMapping(path = "/api/v1/kennel", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Boolean> addNewKennel(HttpServletRequest servletRequest) {
         try {
             ArrayList<Part> requestParts = new ArrayList<>(servletRequest.getParts());

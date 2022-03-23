@@ -14,21 +14,21 @@ import mr.shtein.buddy.models.Person;
 import mr.shtein.buddy.models.PersonRequest;
 import mr.shtein.buddy.models.PersonResponse;
 import mr.shtein.buddy.repository.CityRepository;
-import mr.shtein.buddy.repository.UserRepository;
+import mr.shtein.buddy.repository.PersonRepository;
 import mr.shtein.buddy.request.EmailCheckRequest;
 
 @Service
 public class PersonService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final PersonRepository personRepository;
     private final CityRepository cityRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public PersonService(UserRepository userRepository, CityRepository cityRepository,
+    public PersonService(PersonRepository personRepository, CityRepository cityRepository,
                          PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
+        this.personRepository = personRepository;
         this.cityRepository = cityRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -36,11 +36,11 @@ public class PersonService implements UserDetailsService {
 
     @Override
     public Person loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return personRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public Boolean isEmailExists(EmailCheckRequest emailCheckRequest) {
-        Person user = userRepository.findByEmail(emailCheckRequest.getEmail()).orElse(null);
+        Person user = personRepository.findByEmail(emailCheckRequest.getEmail()).orElse(null);
         return user != null && user.getId() != emailCheckRequest.getPersonId();
     }
 
@@ -48,7 +48,7 @@ public class PersonService implements UserDetailsService {
         String encodedPassword = encodeString(person.getPassword());
         person.setPassword(encodedPassword);
         person.setEnabled(true);
-        person = userRepository.save(person);
+        person = personRepository.save(person);
 
         if (!person.isEnabled()) {
             throw new IllegalStateException("The user is not enabled yet");
@@ -66,7 +66,7 @@ public class PersonService implements UserDetailsService {
 
     public PersonResponse setUserInfo(PersonRequest personRequest) {
         Long personId = personRequest.getId();
-        Person person = userRepository.getById(personId);
+        Person person = personRepository.getById(personId);
 
         person.setName(personRequest.getName());
         person.setSurname(personRequest.getSurname());
@@ -95,7 +95,7 @@ public class PersonService implements UserDetailsService {
         }
 
         try {
-            userRepository.save(person);
+            personRepository.save(person);
             personResponse.setIsUpgrade(true);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
@@ -107,9 +107,13 @@ public class PersonService implements UserDetailsService {
     }
 
     public Boolean isOldPasswordValid(String passwordForMatch, Long personId) {
-        Person currentPerson = userRepository.getById(personId);
+        Person currentPerson = personRepository.getById(personId);
         String currentPassword = currentPerson.getPassword();
         return passwordEncoder.matches(passwordForMatch, currentPassword);
+    }
+
+    public Person getPersonById(int personId) {
+        return personRepository.getById((long) personId);
     }
 
 

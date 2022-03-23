@@ -1,7 +1,9 @@
 package mr.shtein.buddy.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +23,7 @@ import java.util.List;
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.models.AnimalTypeDTO;
+import mr.shtein.buddy.request.NewAnimalRequest;
 import mr.shtein.buddy.services.AnimalService;
 import mr.shtein.buddy.services.AnimalTypeService;
 import mr.shtein.buddy.services.BreedService;
@@ -77,13 +83,6 @@ public class AnimalController {
         return new ResponseEntity<>(miniAnimalsDTOList, HttpStatus.OK);
     }
 
-
-    @PostMapping("/animal")
-    public ResponseEntity<Boolean> addAnimal(@RequestBody Animal animal) {
-        Boolean response = animalService.add(animal);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @GetMapping("/animal/type")
     public ResponseEntity<List<AnimalTypeDTO>> getAnimalTypes() {
         List<AnimalType> animalTypes = animalTypeService.getAllAnimalTypes();
@@ -100,6 +99,15 @@ public class AnimalController {
     public ResponseEntity<List<BreedDTO>> getAnimalBreedByAnimalType(@PathVariable(name = "animal_type") String animalType) {
         List<BreedDTO> breedDTOS = breedService.getBreedsByAnimalType(animalType);
         return new ResponseEntity<>(breedDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/animal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity addNewAnimal(
+            @RequestPart("files") MultipartFile[] files,
+            @RequestPart("animal_info") NewAnimalRequest newAnimalRequest
+    ) {
+        animalService.addNewAnimal(files, newAnimalRequest);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 

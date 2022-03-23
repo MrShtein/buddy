@@ -12,6 +12,5 @@ public class AnimalPhotoDTO {
     public void from(AnimalPhoto photo) {
         url = photo.getUrl();
         isPrimary = photo.getIsPrimary();
-        animalId = photo.getAnimalId();
     }
 }
