@@ -1,7 +1,6 @@
 package mr.shtein.buddy.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +20,14 @@ import java.util.List;
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.models.AnimalTypeDTO;
+import mr.shtein.buddy.models.Characteristic;
 import mr.shtein.buddy.request.NewAnimalRequest;
 import mr.shtein.buddy.services.AnimalService;
 import mr.shtein.buddy.services.AnimalTypeService;
 import mr.shtein.buddy.services.BreedService;
+import mr.shtein.buddy.services.CharacteristicService;
 import mr.shtein.buddy.viewmodel.BreedDTO;
+import mr.shtein.buddy.viewmodel.CharacteristicDTO;
 import mr.shtein.buddy.viewmodel.FullAnimalDTO;
 import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 
@@ -39,12 +39,14 @@ public class AnimalController {
     private final AnimalService animalService;
     private final AnimalTypeService animalTypeService;
     private final BreedService breedService;
+    private final CharacteristicService characteristicService;
 
     @Autowired
-    public AnimalController(AnimalService animalService, AnimalTypeService animalTypeService, BreedService breedService) {
+    public AnimalController(AnimalService animalService, AnimalTypeService animalTypeService, BreedService breedService, CharacteristicService characteristicService) {
         this.animalService = animalService;
         this.animalTypeService = animalTypeService;
         this.breedService = breedService;
+        this.characteristicService = characteristicService;
     }
 
     @GetMapping("/animal")
@@ -95,7 +97,11 @@ public class AnimalController {
         return new ResponseEntity<>(animalTypesDTO, HttpStatus.OK);
     }
 
-    
+    @GetMapping("/animal/characteristic/{characteristic_id}")
+        public ResponseEntity<List<CharacteristicDTO>> getAnimalColors(@PathVariable(name = "characteristic_id") Integer characteristicId) {
+            List<CharacteristicDTO> characteristics = characteristicService.getAllCharacteristicByType(characteristicId);
+            return new ResponseEntity<>(characteristics, HttpStatus.OK);
+        }
 
     @GetMapping("/animal/{animal_type}/breed")
     public ResponseEntity<List<BreedDTO>> getAnimalBreedByAnimalType(@PathVariable(name = "animal_type") Integer animalType) {
