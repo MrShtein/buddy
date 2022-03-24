@@ -23,8 +23,7 @@ public class BreedService {
         this.animalTypeService = animalTypeService;
     }
 
-    public ArrayList<BreedDTO> getBreedsByAnimalType(String animalType) {
-        int animalTypeId = animalTypeService.getAnimalTypeByName(animalType).getId();
+    public ArrayList<BreedDTO> getBreedsByAnimalType(Integer animalTypeId) {
         List<Breed> breedsList = breedRepository.findAllByAnimalTypeIdOrderByName(animalTypeId);
         ArrayList<BreedDTO> breedDTOs = new ArrayList<>();
         breedsList.forEach(breed -> {

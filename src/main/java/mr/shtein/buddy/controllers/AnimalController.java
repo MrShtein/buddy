@@ -95,8 +95,10 @@ public class AnimalController {
         return new ResponseEntity<>(animalTypesDTO, HttpStatus.OK);
     }
 
+    
+
     @GetMapping("/animal/{animal_type}/breed")
-    public ResponseEntity<List<BreedDTO>> getAnimalBreedByAnimalType(@PathVariable(name = "animal_type") String animalType) {
+    public ResponseEntity<List<BreedDTO>> getAnimalBreedByAnimalType(@PathVariable(name = "animal_type") Integer animalType) {
         List<BreedDTO> breedDTOS = breedService.getBreedsByAnimalType(animalType);
         return new ResponseEntity<>(breedDTOS, HttpStatus.OK);
     }

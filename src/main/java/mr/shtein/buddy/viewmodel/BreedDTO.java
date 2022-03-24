@@ -10,9 +10,11 @@ import mr.shtein.buddy.models.City;
 @Getter
 @NoArgsConstructor
 public class BreedDTO {
+    private Integer id;
     private String name;
 
     public void from(Breed breed) {
+        id = breed.getId();
         name = breed.getName();
     }
 }
