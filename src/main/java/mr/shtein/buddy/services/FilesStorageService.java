@@ -73,10 +73,10 @@ public class FilesStorageService {
                 .forEach(file -> {
                     String fileName = UUID.randomUUID().toString();
                     String fileExtension = Objects.requireNonNull(file.getContentType()).split("/")[1];
-                    String pathForNewFolder = mainPath + imagesPath + animalPath;
+                    String pathForNewFolder = mainPath + imagesPath + animalPath + currentDate;
                     makeDirectoryIfNotExist(pathForNewFolder);
                     String pathForDb = currentDate + "/" + fileName + "." + fileExtension;
-                    String pathForFile = pathForNewFolder + "/" + pathForDb;
+                    String pathForFile = pathForNewFolder + "/" + fileName + "." + fileExtension;
                     paths.add(pathForDb);
                     try {
                         Files.copy(file.getInputStream(), Path.of(pathForFile), StandardCopyOption.REPLACE_EXISTING);

@@ -75,7 +75,7 @@ public class AnimalService {
             AnimalType animalType = animalTypeService.getAnimalTypeById(animalTypeId);
             newAnimal.setType(animalType);
 
-            Integer genderId = newAnimalRequest.getGender();
+            Integer genderId = newAnimalRequest.getGenderId();
             Gender gender = genderRepository.findGenderById(genderId);
             newAnimal.setGender(gender);
 
@@ -96,7 +96,7 @@ public class AnimalService {
             String description = newAnimalRequest.getDescription();
             newAnimal.setDescription(description);
 
-            Integer breedId = newAnimalRequest.getBreed();
+            Integer breedId = newAnimalRequest.getBreedId();
             Breed breed = breedService.getBreedById(breedId);
             newAnimal.setBreed(breed);
 

@@ -11,9 +11,9 @@ public class NewAnimalRequest {
     private int years;
     private int months;
     private String name;
-    private int breed;
+    private int breedId;
     private Integer colorCharacteristicId;
-    private int gender;
+    private int genderId;
     private String description;
     private int kennelId;
     private int personId;
