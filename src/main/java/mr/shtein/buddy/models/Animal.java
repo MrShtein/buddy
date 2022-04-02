@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,7 +25,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter
@@ -55,14 +56,16 @@ public class Animal {
     @JoinColumn(name = "kennel_id")
     private Kennel kennel;
 
-    @Column(name = "appearance_date")
+    @Column(name = "created_at")
     private LocalDateTime appearanceDate;
 
-    @Column(name = "issue_date")
-    private LocalDateTime issueDate;
+    @Column(name = "updated_at")
+    private LocalDateTime disappearanceDate;
 
-    @Column(name = "is_exist")
-    private boolean isExist;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private AnimalStatus status;
+
     private String description;
 
     @OneToOne

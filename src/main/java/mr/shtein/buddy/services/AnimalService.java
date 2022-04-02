@@ -6,11 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalPhoto;
+import mr.shtein.buddy.models.AnimalStatus;
 import mr.shtein.buddy.models.AnimalType;
 import mr.shtein.buddy.models.Breed;
 import mr.shtein.buddy.models.Characteristic;
@@ -47,7 +47,7 @@ public class AnimalService {
     }
 
     public List<Animal> getAll() {
-        Iterable<Animal> animalsIter = animalRepository.findAllByOrderByIdAsc();
+        Iterable<Animal> animalsIter = animalRepository.findAllByStatusOrderByIdAsc(AnimalStatus.ACTIVE);
         ArrayList<Animal> animals = new ArrayList<>();
         animalsIter.forEach(animals::add);
         return animals;
@@ -90,9 +90,9 @@ public class AnimalService {
             LocalDateTime appearanceDate = LocalDateTime.now();
             newAnimal.setAppearanceDate(appearanceDate);
 
-            newAnimal.setIssueDate(null);
+            newAnimal.setDisappearanceDate(null);
 
-            newAnimal.setExist(true);
+            newAnimal.setStatus(AnimalStatus.ACTIVE);
 
             String description = newAnimalRequest.getDescription();
             newAnimal.setDescription(description);
@@ -141,8 +141,8 @@ public class AnimalService {
     public void deleteAnimal(long animalId) {
         LocalDateTime currentDate = LocalDateTime.now();
         Animal animalForDel = animalRepository.findById(animalId).get();
-        animalForDel.setExist(false);
-        animalForDel.setIssueDate(currentDate);
+        animalForDel.setStatus(AnimalStatus.REMOVED);
+        animalForDel.setDisappearanceDate(currentDate);
         animalRepository.save(animalForDel);
     }
 
