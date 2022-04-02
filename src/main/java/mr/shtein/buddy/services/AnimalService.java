@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import mr.shtein.buddy.models.Animal;
@@ -135,6 +136,14 @@ public class AnimalService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void deleteAnimal(long animalId) {
+        LocalDateTime currentDate = LocalDateTime.now();
+        Animal animalForDel = animalRepository.findById(animalId).get();
+        animalForDel.setExist(false);
+        animalForDel.setIssueDate(currentDate);
+        animalRepository.save(animalForDel);
     }
 
     public int countAllAnimalByKennelId(int kennelId) {
