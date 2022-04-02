@@ -54,7 +54,11 @@ public class AnimalService {
     }
 
     public List<Animal> getAnimalByKennelId(Integer kennelId, Integer animalType) {
-        Iterable<Animal> animalsIter = animalRepository.findAllByTypeIdAndKennelId(animalType, kennelId);
+        Iterable<Animal> animalsIter = animalRepository.findAllByStatusAndTypeIdAndKennelId(
+                AnimalStatus.ACTIVE,
+                animalType,
+                kennelId
+        );
         ArrayList<Animal> animals = new ArrayList<>();
         animalsIter.forEach(animals::add);
         return animals;
@@ -129,7 +133,8 @@ public class AnimalService {
                     currentPhoto.setAnimal(addedAnimal);
                     photoList.add(currentPhoto);
                 }
-;                addedAnimal.setAnimalPhotos(photoList);
+                ;
+                addedAnimal.setAnimalPhotos(photoList);
                 animalRepository.save(addedAnimal);
             }
 
