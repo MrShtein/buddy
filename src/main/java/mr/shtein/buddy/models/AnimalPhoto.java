@@ -7,6 +7,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,6 +47,11 @@ public class AnimalPhoto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id")
     private Animal animal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    private PhotoStatus status;
+
 
     @Override
     public boolean equals(Object o) {

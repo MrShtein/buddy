@@ -17,6 +17,7 @@ import mr.shtein.buddy.models.Characteristic;
 import mr.shtein.buddy.models.Gender;
 import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.models.Person;
+import mr.shtein.buddy.models.PhotoStatus;
 import mr.shtein.buddy.repository.AnimalRepository;
 import mr.shtein.buddy.repository.CharacteristicRepository;
 import mr.shtein.buddy.repository.GenderRepository;
@@ -121,6 +122,7 @@ public class AnimalService {
             if (imagePaths.size() > 0) {
                 ArrayList<AnimalPhoto> photoList = new ArrayList<>();
                 AnimalPhoto animalPhoto = new AnimalPhoto();
+                animalPhoto.setStatus(PhotoStatus.ACTIVE);
                 animalPhoto.setUrl(imagePaths.get(0));
                 animalPhoto.setIsPrimary(true);
                 animalPhoto.setAnimal(addedAnimal);
@@ -128,6 +130,7 @@ public class AnimalService {
 
                 for (int i = 1; i < imagePaths.size(); i++) {
                     AnimalPhoto currentPhoto = new AnimalPhoto();
+                    currentPhoto.setStatus(PhotoStatus.ACTIVE);
                     currentPhoto.setUrl(imagePaths.get(i));
                     currentPhoto.setIsPrimary(true);
                     currentPhoto.setAnimal(addedAnimal);
