@@ -2,6 +2,7 @@ package mr.shtein.buddy.viewmodel;
 
 import lombok.Data;
 import mr.shtein.buddy.models.AnimalPhoto;
+import mr.shtein.buddy.models.PhotoStatus;
 
 @Data
 public class AnimalPhotoDTO {

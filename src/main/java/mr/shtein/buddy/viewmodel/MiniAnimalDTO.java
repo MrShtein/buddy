@@ -9,6 +9,7 @@ import lombok.Data;
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalPhoto;
 import mr.shtein.buddy.models.Characteristic;
+import mr.shtein.buddy.models.PhotoStatus;
 
 @Data
 public class MiniAnimalDTO {
@@ -40,9 +41,11 @@ public class MiniAnimalDTO {
 
         List<AnimalPhoto> photos = animal.getAnimalPhotos();
         photos.forEach(photo -> {
-            AnimalPhotoDTO current = new AnimalPhotoDTO();
-            current.from(photo);
-            imgUrl.add(current);
+            if (photo.getStatus() == PhotoStatus.ACTIVE) {
+                AnimalPhotoDTO current = new AnimalPhotoDTO();
+                current.from(photo);
+                imgUrl.add(current);
+            }
         });
     }
 }

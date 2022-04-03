@@ -18,6 +18,7 @@ import mr.shtein.buddy.models.Gender;
 import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.models.Person;
 import mr.shtein.buddy.models.PhotoStatus;
+import mr.shtein.buddy.repository.AnimalPhotoRepository;
 import mr.shtein.buddy.repository.AnimalRepository;
 import mr.shtein.buddy.repository.CharacteristicRepository;
 import mr.shtein.buddy.repository.GenderRepository;
@@ -27,6 +28,7 @@ import mr.shtein.buddy.request.NewAnimalRequest;
 @Service
 public class AnimalService {
     private final AnimalRepository animalRepository;
+    private final AnimalPhotoRepository animalPhotoRepository;
     private final AnimalTypeService animalTypeService;
     private final FilesStorageService storage;
     private final GenderRepository genderRepository;
@@ -36,8 +38,9 @@ public class AnimalService {
     private final CharacteristicRepository characteristicRepository;
 
     @Autowired
-    public AnimalService(AnimalRepository animalRepository, AnimalTypeService animalTypeService, FilesStorageService storage, GenderRepository genderRepository, KennelRepository kennelRepository, BreedService breedService, PersonService personService, CharacteristicRepository characteristicRepository) {
+    public AnimalService(AnimalRepository animalRepository, AnimalPhotoRepository animalPhotoRepository, AnimalTypeService animalTypeService, FilesStorageService storage, GenderRepository genderRepository, KennelRepository kennelRepository, BreedService breedService, PersonService personService, CharacteristicRepository characteristicRepository) {
         this.animalRepository = animalRepository;
+        this.animalPhotoRepository = animalPhotoRepository;
         this.animalTypeService = animalTypeService;
         this.storage = storage;
         this.genderRepository = genderRepository;
@@ -132,7 +135,7 @@ public class AnimalService {
                     AnimalPhoto currentPhoto = new AnimalPhoto();
                     currentPhoto.setStatus(PhotoStatus.ACTIVE);
                     currentPhoto.setUrl(imagePaths.get(i));
-                    currentPhoto.setIsPrimary(true);
+                    currentPhoto.setIsPrimary(false);
                     currentPhoto.setAnimal(addedAnimal);
                     photoList.add(currentPhoto);
                 }
@@ -154,8 +157,32 @@ public class AnimalService {
         animalRepository.save(animalForDel);
     }
 
+    public void deletePhoto(String url) {
+        LocalDateTime currentDate = LocalDateTime.now();
+        AnimalPhoto photoForDel = animalPhotoRepository.findByUrl(url);
+
+        if (photoForDel.getIsPrimary()) {
+            long currentAnimalId = photoForDel.getAnimal().getId();
+
+            photoForDel.setStatus(PhotoStatus.REMOVED);
+            photoForDel.setIsPrimary(false);
+            photoForDel.setStatusChangeDate(currentDate);
+            animalPhotoRepository.save(photoForDel);
+
+            ArrayList<AnimalPhoto> currentAnimalAllPhotos = animalPhotoRepository
+                    .findAllByAnimalIdAndStatus(currentAnimalId, PhotoStatus.ACTIVE);
+            if (currentAnimalAllPhotos.size() > 0) {
+                AnimalPhoto currentPhoto = currentAnimalAllPhotos.get(0);
+                currentPhoto.setIsPrimary(true); // TODO придумать логику выбора главной фотографии
+                animalPhotoRepository.save(currentPhoto);
+            }
+        }
+
+
+    }
+
     public int countAllAnimalByKennelId(int kennelId) {
-        return animalRepository.countAllByKennelId(kennelId);
+        return animalRepository.countAllByKennelIdAndStatus(kennelId, AnimalStatus.ACTIVE);
     }
 
 

@@ -126,6 +126,12 @@ public class AnimalController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/animal/photo/{date}/{file_name}")
+    public ResponseEntity<Void> deletePhoto(@PathVariable(name = "date") String date, @PathVariable(name = "file_name") String fileName) {
+        animalService.deletePhoto(date + "/" + fileName);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 
 

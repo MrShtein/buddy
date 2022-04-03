@@ -2,6 +2,8 @@ package mr.shtein.buddy.models;
 
 import org.hibernate.Hibernate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -51,6 +53,9 @@ public class AnimalPhoto {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private PhotoStatus status;
+
+    @Column(name = "status_change_date")
+    private LocalDateTime statusChangeDate;
 
 
     @Override
