@@ -1,5 +1,6 @@
 package mr.shtein.buddy.controllers;
 
+import org.aspectj.util.FileUtil;
 import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,10 +34,10 @@ public class PhotoController {
     }
 
     @GetMapping("/animal/photo/{creation_date}/{file_name}")
-    public ResponseEntity<FileSystemResource> getAnimalPhoto(
+    public ResponseEntity<byte[]> getAnimalPhoto(
             @PathVariable("creation_date") String creationDate,
             @PathVariable("file_name") String fileName
-    ) {
+    ) throws IOException {
 
         String path =
                 System.getProperty("user.home") +
@@ -48,9 +50,10 @@ public class PhotoController {
         respHeader.setContentLength(fileLength);
         respHeader.setContentDispositionFormData("attachment", file.getName());
 
-        return new ResponseEntity<>(
-                new FileSystemResource(file), respHeader, HttpStatus.OK
-        );
+        return ResponseEntity.ok()
+                .headers(respHeader)
+                .body(FileUtil.readAsByteArray(file)
+                );
     }
 
 
