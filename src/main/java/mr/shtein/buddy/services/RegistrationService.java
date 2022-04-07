@@ -13,7 +13,7 @@ import mr.shtein.buddy.models.Role;
 public class RegistrationService {
 
     private final PersonService userDetailsService;
-    private final int ROLE_FOR_NEW_USER = 1;
+    private final int ROLE_FOR_NEW_USER = 2;
 
     public Person register(RegistrationRequest registrationRequest) {
         if (registrationRequest.getEmail().isBlank()) {
