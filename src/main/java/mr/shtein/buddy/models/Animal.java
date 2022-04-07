@@ -67,7 +67,7 @@ public class Animal {
     @Column(name = "status")
     private AnimalStatus status;
 
-    @Lob
+    @Column(columnDefinition="TEXT")
     private String description;
 
     @OneToOne
