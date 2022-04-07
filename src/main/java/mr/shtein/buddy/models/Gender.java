@@ -28,5 +28,4 @@ public class Gender {
     @Column(name = "gender_id")
     private Integer id;
     private String gender_type;
-
 }
