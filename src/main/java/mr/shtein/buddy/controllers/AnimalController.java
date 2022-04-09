@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +121,17 @@ public class AnimalController {
     ) {
         animalService.addNewAnimal(files, newAnimalRequest);
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/animal/photo")
+    public ResponseEntity<?> addAnimalPhotoToTmpDir(@RequestHeader("Content-Type") String contentType, @RequestBody byte[] photo) {
+        try {
+            String photoUrl = animalService.addPhotoToTmpDir(contentType, photo);
+            return new ResponseEntity<>(photoUrl, HttpStatus.CREATED);
+        } catch (IOException ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @DeleteMapping("/animal/{animal_id}")

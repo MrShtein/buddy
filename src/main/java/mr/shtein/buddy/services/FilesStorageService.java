@@ -59,6 +59,19 @@ public class FilesStorageService {
         return uniqueFileName + "." + fileExtension;
     }
 
+    public String addAnimalPhotoToTmpDir(String contentType, byte[] photo) throws IOException {
+        String fileName = UUID.randomUUID().toString();
+        String fileExt = contentType.split("/")[1];
+        String pathToTmpDir = mainPath + imagesPath + "/temp";
+        File dir = new File(pathToTmpDir);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        String fullPath = pathToTmpDir + "/" + fileName + "." + fileExt;
+        Files.write(Path.of(fullPath), photo);
+        return fileName + "." + fileExt;
+    }
+
     public Avatar getKennelAvatar(String address) throws IOException {
         Path path = Path.of(System.getProperty("user.home") + imagesPath + kennelAvatarPath + address);
         String contentType = Files.probeContentType(path);

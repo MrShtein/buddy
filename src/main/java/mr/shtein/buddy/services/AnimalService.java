@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,6 +156,10 @@ public class AnimalService {
         animalForDel.setStatus(AnimalStatus.REMOVED);
         animalForDel.setDisappearanceDate(currentDate);
         animalRepository.save(animalForDel);
+    }
+
+    public String addPhotoToTmpDir(String contentType, byte[] photo) throws IOException {
+        return storage.addAnimalPhotoToTmpDir(contentType, photo);
     }
 
     public void deletePhoto(String url) {
