@@ -114,13 +114,15 @@ public class AnimalController {
         return new ResponseEntity<>(breedDTOS, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/animal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity addNewAnimal(
-            @RequestPart("files") MultipartFile[] files,
-            @RequestPart("animal_info") NewAnimalRequest newAnimalRequest
-    ) {
-        animalService.addNewAnimal(files, newAnimalRequest);
-        return new ResponseEntity(HttpStatus.CREATED);
+    @PostMapping("/animal")
+    public ResponseEntity<Void> addNewAnimal(@RequestBody NewAnimalRequest newAnimalRequest) {
+        try {
+            animalService.addNewAnimal(newAnimalRequest);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IOException ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @PostMapping("/animal/photo")

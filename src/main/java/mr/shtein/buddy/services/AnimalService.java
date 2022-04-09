@@ -75,9 +75,7 @@ public class AnimalService {
                 .orElseThrow();
     }
 
-    public void addNewAnimal(MultipartFile[] images, NewAnimalRequest newAnimalRequest) {
-
-        try {
+    public void addNewAnimal(NewAnimalRequest newAnimalRequest) throws IOException {
             Animal newAnimal = new Animal();
             newAnimal.setName(newAnimalRequest.getName());
 
@@ -122,7 +120,9 @@ public class AnimalService {
 
             Animal addedAnimal = animalRepository.save(newAnimal);
 
-            ArrayList<String> imagePaths = storage.addNewAnimalImages(images);
+            storage.delExtraPhotos(newAnimalRequest.getPhotoNamesForDelete());
+
+            ArrayList<String> imagePaths = storage.addNewAnimalImages(newAnimalRequest.getPhotoNamesForCreate());
             if (imagePaths.size() > 0) {
                 ArrayList<AnimalPhoto> photoList = new ArrayList<>();
                 AnimalPhoto animalPhoto = new AnimalPhoto();
@@ -139,15 +139,10 @@ public class AnimalService {
                     currentPhoto.setIsPrimary(false);
                     currentPhoto.setAnimal(addedAnimal);
                     photoList.add(currentPhoto);
-                }
-                ;
+                };
                 addedAnimal.setAnimalPhotos(photoList);
                 animalRepository.save(addedAnimal);
             }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     public void deleteAnimal(long animalId) {

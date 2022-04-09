@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import mr.shtein.buddy.models.Avatar;
 public class FilesStorageService {
 
     private String mainPath = System.getProperty("user.home");
+    private String tmpFolder = "/temp";
     private String imagesPath;
     private String kennelAvatarPath;
     private String personAvatarPath;
@@ -62,7 +64,7 @@ public class FilesStorageService {
     public String addAnimalPhotoToTmpDir(String contentType, byte[] photo) throws IOException {
         String fileName = UUID.randomUUID().toString();
         String fileExt = contentType.split("/")[1];
-        String pathToTmpDir = mainPath + imagesPath + "/temp";
+        String pathToTmpDir = mainPath + imagesPath + tmpFolder;
         File dir = new File(pathToTmpDir);
         if (!dir.exists()) {
             dir.mkdir();
@@ -79,25 +81,29 @@ public class FilesStorageService {
         return new Avatar(contentType, data);
     }
 
-    public ArrayList<String> addNewAnimalImages(MultipartFile[] files) {
+    public ArrayList<String> addNewAnimalImages(List<String> fileNames) throws IOException {
         String currentDate = LocalDate.now().toString();
         ArrayList<String> paths = new ArrayList<>();
-        Arrays.stream(files)
-                .forEach(file -> {
-                    String fileName = UUID.randomUUID().toString();
-                    String fileExtension = Objects.requireNonNull(file.getContentType()).split("/")[1];
-                    String pathForNewFolder = mainPath + imagesPath + animalPath + currentDate;
-                    makeDirectoryIfNotExist(pathForNewFolder);
-                    String pathForDb = currentDate + "/" + fileName + "." + fileExtension;
-                    String pathForFile = pathForNewFolder + "/" + fileName + "." + fileExtension;
-                    paths.add(pathForDb);
-                    try {
-                        Files.copy(file.getInputStream(), Path.of(pathForFile), StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
-                });
+
+        for (String fileName: fileNames) {
+            String pathForNewFolder = mainPath + imagesPath + animalPath + currentDate;
+            String pathToTmpFolder = mainPath + imagesPath + tmpFolder;
+            makeDirectoryIfNotExist(pathForNewFolder);
+            String pathForDb = currentDate + "/" + fileName;
+            String pathForFile = pathForNewFolder + "/" + fileName;
+            paths.add(pathForDb);
+                Files.move(Path.of(pathToTmpFolder + "/" + fileName), Path.of(pathForFile));
+        };
         return paths;
+
+    }
+
+    public void delExtraPhotos(List<String> photosForDel) throws IOException {
+        String pathToExtraPhotos = mainPath + imagesPath + tmpFolder + "/";
+        for (String fileName: photosForDel) {
+            Path pathToDel = Path.of(pathToExtraPhotos + fileName);
+            Files.deleteIfExists(pathToDel);
+        };
     }
 
     private void makeDirectoryIfNotExist(String path) {
