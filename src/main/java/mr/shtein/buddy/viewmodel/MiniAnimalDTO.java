@@ -3,7 +3,6 @@ package mr.shtein.buddy.viewmodel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.Data;
 import mr.shtein.buddy.models.Animal;
@@ -14,9 +13,11 @@ import mr.shtein.buddy.models.PhotoStatus;
 @Data
 public class MiniAnimalDTO {
     private long id;
-    private String spices;
+    private String type;
+    private int typeId;
     private String name;
     private String kennelName;
+    private long kennelId;
     private String gender;
     private int age;
     private String description;
@@ -26,9 +27,11 @@ public class MiniAnimalDTO {
 
     public void from(Animal animal) {
         id = animal.getId();
-        spices = animal.getType().getName();
+        type = animal.getType().getName();
+        typeId = animal.getType().getId();
         name = animal.getName();
         kennelName = animal.getKennel().getName();
+        kennelId = animal.getKennel().getId();
         gender = animal.getGender().getGender_type();
         age = animal.getApproximateAge();
         description = animal.getDescription();
