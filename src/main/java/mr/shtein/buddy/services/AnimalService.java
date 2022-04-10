@@ -2,7 +2,6 @@ package mr.shtein.buddy.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ import mr.shtein.buddy.repository.AnimalRepository;
 import mr.shtein.buddy.repository.CharacteristicRepository;
 import mr.shtein.buddy.repository.GenderRepository;
 import mr.shtein.buddy.repository.KennelRepository;
-import mr.shtein.buddy.request.NewAnimalRequest;
+import mr.shtein.buddy.request.AddOrUpdateAnimalRequest;
 
 @Service
 public class AnimalService {
@@ -75,22 +74,22 @@ public class AnimalService {
                 .orElseThrow();
     }
 
-    public void addNewAnimal(NewAnimalRequest newAnimalRequest) throws IOException {
+    public void addNewAnimal(AddOrUpdateAnimalRequest addOrUpdateAnimalRequest) throws IOException {
             Animal newAnimal = new Animal();
-            newAnimal.setName(newAnimalRequest.getName());
+            newAnimal.setName(addOrUpdateAnimalRequest.getName());
 
-            Integer animalTypeId = newAnimalRequest.getAnimalTypeId();
+            Integer animalTypeId = addOrUpdateAnimalRequest.getAnimalTypeId();
             AnimalType animalType = animalTypeService.getAnimalTypeById(animalTypeId);
             newAnimal.setType(animalType);
 
-            Integer genderId = newAnimalRequest.getGenderId();
+            Integer genderId = addOrUpdateAnimalRequest.getGenderId();
             Gender gender = genderRepository.findGenderById(genderId);
             newAnimal.setGender(gender);
 
-            int approximateAge = newAnimalRequest.getYears() * 12 + newAnimalRequest.getMonths();
+            int approximateAge = addOrUpdateAnimalRequest.getYears() * 12 + addOrUpdateAnimalRequest.getMonths();
             newAnimal.setApproximateAge(approximateAge);
 
-            int kennelId = newAnimalRequest.getKennelId();
+            int kennelId = addOrUpdateAnimalRequest.getKennelId();
             Kennel kennel = kennelRepository.findById(kennelId).get();
             newAnimal.setKennel(kennel);
 
@@ -101,18 +100,18 @@ public class AnimalService {
 
             newAnimal.setStatus(AnimalStatus.ACTIVE);
 
-            String description = newAnimalRequest.getDescription();
+            String description = addOrUpdateAnimalRequest.getDescription();
             newAnimal.setDescription(description);
 
-            Integer breedId = newAnimalRequest.getBreedId();
+            Integer breedId = addOrUpdateAnimalRequest.getBreedId();
             Breed breed = breedService.getBreedById(breedId);
             newAnimal.setBreed(breed);
 
-            int personId = newAnimalRequest.getPersonId();
+            int personId = addOrUpdateAnimalRequest.getPersonId();
             Person person = personService.getPersonById(personId);
             newAnimal.setPerson(person);
 
-            Integer characteristicId = newAnimalRequest.getColorCharacteristicId();
+            Integer characteristicId = addOrUpdateAnimalRequest.getColorCharacteristicId();
             Characteristic characteristic = characteristicRepository
                     .findById(characteristicId)
                     .get();
@@ -120,9 +119,9 @@ public class AnimalService {
 
             Animal addedAnimal = animalRepository.save(newAnimal);
 
-            storage.delExtraPhotos(newAnimalRequest.getPhotoNamesForDelete());
+            storage.delExtraPhotos(addOrUpdateAnimalRequest.getPhotoNamesForDelete());
 
-            ArrayList<String> imagePaths = storage.addNewAnimalImages(newAnimalRequest.getPhotoNamesForCreate());
+            ArrayList<String> imagePaths = storage.addNewAnimalImages(addOrUpdateAnimalRequest.getPhotoNamesForCreate());
             if (imagePaths.size() > 0) {
                 ArrayList<AnimalPhoto> photoList = new ArrayList<>();
                 AnimalPhoto animalPhoto = new AnimalPhoto();

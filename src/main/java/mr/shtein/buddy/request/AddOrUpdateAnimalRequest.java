@@ -9,7 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NewAnimalRequest {
+public class AddOrUpdateAnimalRequest {
+    private Long animalId;
     private int years;
     private int months;
     private String name;
