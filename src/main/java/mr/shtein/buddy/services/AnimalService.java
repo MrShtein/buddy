@@ -1,6 +1,5 @@
 package mr.shtein.buddy.services;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -181,7 +180,6 @@ public class AnimalService {
         });
 
         saveImages(animalRequest, animal);
-        animal = animalRepository.findById(animalRequest.getAnimalId()).orElseThrow();
         MiniAnimalDTO miniAnimalDTO = new MiniAnimalDTO();
         miniAnimalDTO.from(animal);
         return miniAnimalDTO;
