@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,7 +118,16 @@ public class AnimalController {
         } catch (IOException ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @PutMapping("/animal")
+    public ResponseEntity<MiniAnimalDTO> updateAnimal(@RequestBody AddOrUpdateAnimalRequest animalRequest) {
+        try {
+            MiniAnimalDTO animalDTO = animalService.updateAnimal(animalRequest);
+            return new ResponseEntity<>(animalDTO, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/animal/photo")
@@ -137,11 +147,11 @@ public class AnimalController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/animal/photo/{date}/{file_name}")
-    public ResponseEntity<Void> deletePhoto(@PathVariable(name = "date") String date, @PathVariable(name = "file_name") String fileName) {
-        animalService.deletePhoto(date + "/" + fileName);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @DeleteMapping("/animal/photo/{date}/{file_name}")
+//    public ResponseEntity<Void> deletePhoto(@PathVariable(name = "date") String date, @PathVariable(name = "file_name") String fileName) {
+//        animalService.deletePhoto(date + "/" + fileName);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
 
 

@@ -1,12 +1,15 @@
 package mr.shtein.buddy.services;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalPhoto;
@@ -24,6 +27,7 @@ import mr.shtein.buddy.repository.CharacteristicRepository;
 import mr.shtein.buddy.repository.GenderRepository;
 import mr.shtein.buddy.repository.KennelRepository;
 import mr.shtein.buddy.request.AddOrUpdateAnimalRequest;
+import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 
 @Service
 public class AnimalService {
@@ -121,27 +125,7 @@ public class AnimalService {
 
             storage.delExtraPhotos(addOrUpdateAnimalRequest.getPhotoNamesForDelete());
 
-            ArrayList<String> imagePaths = storage.addNewAnimalImages(addOrUpdateAnimalRequest.getPhotoNamesForCreate());
-            if (imagePaths.size() > 0) {
-                ArrayList<AnimalPhoto> photoList = new ArrayList<>();
-                AnimalPhoto animalPhoto = new AnimalPhoto();
-                animalPhoto.setStatus(PhotoStatus.ACTIVE);
-                animalPhoto.setUrl(imagePaths.get(0));
-                animalPhoto.setIsPrimary(true);
-                animalPhoto.setAnimal(addedAnimal);
-                photoList.add(animalPhoto);
-
-                for (int i = 1; i < imagePaths.size(); i++) {
-                    AnimalPhoto currentPhoto = new AnimalPhoto();
-                    currentPhoto.setStatus(PhotoStatus.ACTIVE);
-                    currentPhoto.setUrl(imagePaths.get(i));
-                    currentPhoto.setIsPrimary(false);
-                    currentPhoto.setAnimal(addedAnimal);
-                    photoList.add(currentPhoto);
-                };
-                addedAnimal.setAnimalPhotos(photoList);
-                animalRepository.save(addedAnimal);
-            }
+        saveImages(addOrUpdateAnimalRequest, addedAnimal);
     }
 
     public void deleteAnimal(long animalId) {
@@ -156,33 +140,114 @@ public class AnimalService {
         return storage.addAnimalPhotoToTmpDir(contentType, photo);
     }
 
-    public void deletePhoto(String url) {
-        LocalDateTime currentDate = LocalDateTime.now();
-        AnimalPhoto photoForDel = animalPhotoRepository.findByUrl(url);
-
-        if (photoForDel.getIsPrimary()) {
-            long currentAnimalId = photoForDel.getAnimal().getId();
-
-            photoForDel.setStatus(PhotoStatus.REMOVED);
-            photoForDel.setIsPrimary(false);
-            photoForDel.setStatusChangeDate(currentDate);
-            animalPhotoRepository.save(photoForDel);
-
-            ArrayList<AnimalPhoto> currentAnimalAllPhotos = animalPhotoRepository
-                    .findAllByAnimalIdAndStatus(currentAnimalId, PhotoStatus.ACTIVE);
-            if (currentAnimalAllPhotos.size() > 0) {
-                AnimalPhoto currentPhoto = currentAnimalAllPhotos.get(0);
-                currentPhoto.setIsPrimary(true); // TODO придумать логику выбора главной фотографии
-                animalPhotoRepository.save(currentPhoto);
-            }
-        }
-
-
-    }
-
     public int countAllAnimalByKennelId(int kennelId) {
         return animalRepository.countAllByKennelIdAndStatus(kennelId, AnimalStatus.ACTIVE);
     }
 
+    public MiniAnimalDTO updateAnimal(AddOrUpdateAnimalRequest animalRequest) throws IOException {
+        Animal animal = animalRepository.findById(animalRequest.getAnimalId()).orElseThrow();
+        animal.setName(animalRequest.getName());
 
+        Integer genderId = animalRequest.getGenderId();
+        Gender gender = genderRepository.findGenderById(genderId);
+        animal.setGender(gender);
+
+        int approximateAge = animalRequest.getYears() * 12 + animalRequest.getMonths();
+        animal.setApproximateAge(approximateAge);
+
+        String description = animalRequest.getDescription();
+        animal.setDescription(description);
+
+        Integer breedId = animalRequest.getBreedId();
+        Breed breed = breedService.getBreedById(breedId);
+        animal.setBreed(breed);
+
+        Integer characteristicId = animalRequest.getColorCharacteristicId();
+        Characteristic characteristic = characteristicRepository
+                .findById(characteristicId)
+                .orElseThrow();
+        animal.getCharacteristics().add(characteristic);
+
+        storage.delExtraPhotos(animalRequest.getPhotoNamesForDelete());
+        makeOldPhotoRemoved(animalRequest.getPhotoNamesForDelete());
+
+        ArrayList<AnimalPhoto> animalPhoto = animalPhotoRepository.findAllByAnimalIdAndStatus(
+                animalRequest.getAnimalId(), PhotoStatus.ACTIVE
+        );
+        List<String> photoNamesForCreate = animalRequest.getPhotoNamesForCreate();
+
+        animalPhoto.forEach(photo -> {
+            photoNamesForCreate.remove(photo.getUrl());
+        });
+
+        saveImages(animalRequest, animal);
+        animal = animalRepository.findById(animalRequest.getAnimalId()).orElseThrow();
+        MiniAnimalDTO miniAnimalDTO = new MiniAnimalDTO();
+        miniAnimalDTO.from(animal);
+        return miniAnimalDTO;
+
+    }
+
+    private void saveImages(AddOrUpdateAnimalRequest animalRequest, Animal animal) throws IOException {
+        ArrayList<AnimalPhoto> currentAnimalAllPhotos = animalPhotoRepository
+                .findAllByAnimalIdAndStatus(animalRequest.getAnimalId(), PhotoStatus.ACTIVE);
+        if (currentAnimalAllPhotos == null) currentAnimalAllPhotos = new ArrayList<>();
+        boolean hasPrimaryPhoto = getHasPrimaryPhoto(currentAnimalAllPhotos);
+        ArrayList<String> imagePaths = storage.addNewAnimalImages(animalRequest.getPhotoNamesForCreate());
+        if (imagePaths.size() > 0) {
+            AnimalPhoto animalPhoto = new AnimalPhoto();
+            animalPhoto.setStatus(PhotoStatus.ACTIVE);
+            animalPhoto.setUrl(imagePaths.get(0));
+            animalPhoto.setIsPrimary(!hasPrimaryPhoto);
+
+            animalPhoto.setAnimal(animal);
+            currentAnimalAllPhotos.add(animalPhoto);
+
+            for (int i = 1; i < imagePaths.size(); i++) {
+                AnimalPhoto currentPhoto = new AnimalPhoto();
+                currentPhoto.setStatus(PhotoStatus.ACTIVE);
+                currentPhoto.setUrl(imagePaths.get(i));
+                currentPhoto.setIsPrimary(false);
+                currentPhoto.setAnimal(animal);
+                currentAnimalAllPhotos.add(currentPhoto);
+            };
+            animal.setAnimalPhotos(currentAnimalAllPhotos);
+            animalRepository.save(animal);
+        }
+    }
+
+    private boolean getHasPrimaryPhoto(ArrayList<AnimalPhoto> photos) {
+        for (AnimalPhoto photo : photos) {
+            if (photo.getIsPrimary()) return true;
+        }
+        return false;
+    }
+
+    private void makeOldPhotoRemoved(List<String> photoUrlList) {
+        photoUrlList.forEach(url -> {
+            if (url.matches("\\d{4}-\\d{2}-\\d{2}/.+")) {
+                LocalDateTime currentDate = LocalDateTime.now();
+                AnimalPhoto animalPhoto = animalPhotoRepository.findByUrl(url);
+                animalPhoto.setStatus(PhotoStatus.REMOVED);
+                animalPhoto.setStatusChangeDate(currentDate);
+                animalPhotoRepository.save(animalPhoto);
+
+                if (animalPhoto.getIsPrimary()) {
+                    long currentAnimalId = animalPhoto.getAnimal().getId();
+
+                    animalPhoto.setStatus(PhotoStatus.REMOVED);
+                    animalPhoto.setIsPrimary(false);
+                    animalPhotoRepository.save(animalPhoto);
+
+                    ArrayList<AnimalPhoto> currentAnimalAllPhotos = animalPhotoRepository
+                            .findAllByAnimalIdAndStatus(currentAnimalId, PhotoStatus.ACTIVE);
+                    if (currentAnimalAllPhotos.size() > 0) {
+                        AnimalPhoto currentPhoto = currentAnimalAllPhotos.get(0);
+                        currentPhoto.setIsPrimary(true); // TODO придумать логику выбора главной фотографии
+                        animalPhotoRepository.save(currentPhoto);
+                    }
+                }
+            }
+        });
+    }
 }

@@ -98,9 +98,9 @@ public class FilesStorageService {
 
     }
 
-    public void delExtraPhotos(List<String> photosForDel) throws IOException {
+    public void delExtraPhotos(List<String> photos) throws IOException {
         String pathToExtraPhotos = mainPath + imagesPath + tmpFolder + "/";
-        for (String fileName: photosForDel) {
+        for (String fileName: photos) {
             Path pathToDel = Path.of(pathToExtraPhotos + fileName);
             Files.deleteIfExists(pathToDel);
         };
