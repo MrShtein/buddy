@@ -37,7 +37,7 @@ public class Person implements UserDetails {
     @Column(name = "person_id")
     private long id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "name")
