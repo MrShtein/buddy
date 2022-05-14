@@ -2,6 +2,8 @@ package mr.shtein.buddy.services;
 
 import com.google.gson.Gson;
 
+import mr.shtein.buddy.models.Person;
+import mr.shtein.buddy.models.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class KennelService {
 
     private final KennelRepository kennelRepository;
     private final AnimalService animalService;
+    private final PersonService personService;
+    private final RoleService roleService;
     private final FilesStorageService filesStorageService;
     private final String DEFAULT_AVT_NAME = "default.jpeg";
     private final String NEW_ROLE_TXT = "ROLE_ADMIN";
@@ -33,10 +37,12 @@ public class KennelService {
 
     public KennelService(
             KennelRepository kennelRepository,
-            AnimalService animalService, FilesStorageService filesStorageService
+            AnimalService animalService, PersonService personService, RoleService roleService, FilesStorageService filesStorageService
     ) {
         this.kennelRepository = kennelRepository;
         this.animalService = animalService;
+        this.personService = personService;
+        this.roleService = roleService;
         this.filesStorageService = filesStorageService;
     }
 
@@ -61,8 +67,11 @@ public class KennelService {
         Gson gson = new Gson();
         KennelRequest kennelRequest = gson.fromJson(kennelJson, KennelRequest.class);
         Kennel kennel = makeKennel(kennelRequest, avtName);
+        Person currentPerson = personService.getPersonById(kennel.getAdministratorID());
+        Role newRole = roleService.getRoleByName(NEW_ROLE_TXT);
+        currentPerson.setRole(newRole);
+        personService.savePerson(currentPerson);
         kennelRepository.save(kennel);
-
         return true;
     }
 

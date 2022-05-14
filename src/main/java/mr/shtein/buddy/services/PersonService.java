@@ -112,8 +112,12 @@ public class PersonService implements UserDetailsService {
         return passwordEncoder.matches(passwordForMatch, currentPassword);
     }
 
-    public Person getPersonById(int personId) {
-        return personRepository.getById((long) personId);
+    public Person getPersonById(long personId) {
+        return personRepository.getById(personId);
+    }
+
+    public void savePerson(Person person) {
+        personRepository.save(person);
     }
 
 

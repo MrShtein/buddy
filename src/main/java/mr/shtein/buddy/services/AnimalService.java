@@ -110,7 +110,7 @@ public class AnimalService {
             Breed breed = breedService.getBreedById(breedId);
             newAnimal.setBreed(breed);
 
-            int personId = addOrUpdateAnimalRequest.getPersonId();
+            long personId = (long) addOrUpdateAnimalRequest.getPersonId();
             Person person = personService.getPersonById(personId);
             newAnimal.setPerson(person);
 
