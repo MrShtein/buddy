@@ -2,15 +2,7 @@ package mr.shtein.buddy.models;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +23,9 @@ public class Kennel {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "location", nullable = false)
-    private Integer location;
+    @OneToOne
+    @JoinColumn(name = "location", nullable = false)
+    private City city;
 
     @Column(name = "street", nullable = false)
     private String street;
@@ -61,6 +54,12 @@ public class Kennel {
     @Column(name = "administrator_id", nullable = false)
     private Long administratorID;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @ManyToMany
     @JoinTable(
             name = "volunteer",
@@ -68,6 +67,8 @@ public class Kennel {
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
     private List<Person> volunteers;
+
+
 
 
 
