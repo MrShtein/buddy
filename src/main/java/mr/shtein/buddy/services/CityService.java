@@ -31,4 +31,8 @@ public class CityService {
         });
         return citiesDTO;
     }
+
+    public City getCityById(Integer id) {
+       return cityRepository.findById(id).orElseThrow();
+    }
 }
