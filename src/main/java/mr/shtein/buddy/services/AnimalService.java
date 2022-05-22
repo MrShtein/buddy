@@ -1,14 +1,13 @@
 package mr.shtein.buddy.services;
 
+import mr.shtein.buddy.viewmodel.AnimalDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import mr.shtein.buddy.models.Animal;
 import mr.shtein.buddy.models.AnimalPhoto;
@@ -26,7 +25,6 @@ import mr.shtein.buddy.repository.CharacteristicRepository;
 import mr.shtein.buddy.repository.GenderRepository;
 import mr.shtein.buddy.repository.KennelRepository;
 import mr.shtein.buddy.request.AddOrUpdateAnimalRequest;
-import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
 
 @Service
 public class AnimalService {
@@ -143,7 +141,7 @@ public class AnimalService {
         return animalRepository.countAllByKennelIdAndStatus(kennelId, AnimalStatus.ACTIVE);
     }
 
-    public MiniAnimalDTO updateAnimal(AddOrUpdateAnimalRequest animalRequest) throws IOException {
+    public AnimalDTO updateAnimal(AddOrUpdateAnimalRequest animalRequest) throws IOException {
         Animal animal = animalRepository.findById(animalRequest.getAnimalId()).orElseThrow();
         animal.setName(animalRequest.getName());
 
@@ -180,7 +178,7 @@ public class AnimalService {
         });
 
         saveImages(animalRequest, animal);
-        MiniAnimalDTO miniAnimalDTO = new MiniAnimalDTO();
+        AnimalDTO miniAnimalDTO = new AnimalDTO();
         miniAnimalDTO.from(animal);
         return miniAnimalDTO;
 

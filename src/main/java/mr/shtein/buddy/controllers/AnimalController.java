@@ -29,8 +29,7 @@ import mr.shtein.buddy.services.BreedService;
 import mr.shtein.buddy.services.CharacteristicService;
 import mr.shtein.buddy.viewmodel.BreedDTO;
 import mr.shtein.buddy.viewmodel.CharacteristicDTO;
-import mr.shtein.buddy.viewmodel.FullAnimalDTO;
-import mr.shtein.buddy.viewmodel.MiniAnimalDTO;
+import mr.shtein.buddy.viewmodel.AnimalDTO;
 
 @RestController
 @Validated
@@ -51,11 +50,11 @@ public class AnimalController {
     }
 
     @GetMapping("/animal")
-    public ResponseEntity<List<MiniAnimalDTO>> getAnimalsByFilter() {
+    public ResponseEntity<List<AnimalDTO>> getAnimalsByFilter() {
         List<Animal> animals = animalService.getAll();
-        List<MiniAnimalDTO> animalsDTO = new ArrayList<>();
+        List<AnimalDTO> animalsDTO = new ArrayList<>();
         for (Animal animal : animals) {
-            MiniAnimalDTO currentMiniAnimalDTO = new MiniAnimalDTO();
+            AnimalDTO currentMiniAnimalDTO = new AnimalDTO();
             currentMiniAnimalDTO.from(animal);
             animalsDTO.add(currentMiniAnimalDTO);
         }
@@ -63,25 +62,25 @@ public class AnimalController {
     }
 
     @GetMapping("/animal/{id}")
-    public ResponseEntity<FullAnimalDTO> getAnimalById(@PathVariable Long id) {
+    public ResponseEntity<AnimalDTO> getAnimalById(@PathVariable Long id) {
         Animal currentAnimal = animalService.getAnimalById(id);
-        FullAnimalDTO fullAnimalDTO = new FullAnimalDTO();
-        fullAnimalDTO.from(currentAnimal);
-        return new ResponseEntity<>(fullAnimalDTO, HttpStatus.OK);
+        AnimalDTO animalDTO = new AnimalDTO();
+        animalDTO.from(currentAnimal);
+        return new ResponseEntity<>(animalDTO, HttpStatus.OK);
     }
 
     @GetMapping("animal/kennel/{kennel_id}/{animal_type}")
-    public ResponseEntity<List<MiniAnimalDTO>> getAnimalsByKennel(
+    public ResponseEntity<List<AnimalDTO>> getAnimalsByKennel(
             @PathVariable("kennel_id") Integer kennelId,
             @PathVariable("animal_type") String animalType
             ) {
         AnimalType animalTypeNum = animalTypeService.getAnimalTypeByPluralName(animalType);
         List<Animal> animals = animalService.getAnimalByKennelId(kennelId, animalTypeNum.getId());
-        ArrayList<MiniAnimalDTO> miniAnimalsDTOList = new ArrayList<>();
+        ArrayList<AnimalDTO> miniAnimalsDTOList = new ArrayList<>();
         animals.forEach(animal -> {
-            MiniAnimalDTO miniAnimalDTO = new MiniAnimalDTO();
-            miniAnimalDTO.from(animal);
-            miniAnimalsDTOList.add(miniAnimalDTO);
+            AnimalDTO animalDTO = new AnimalDTO();
+            animalDTO.from(animal);
+            miniAnimalsDTOList.add(animalDTO);
         });
         return new ResponseEntity<>(miniAnimalsDTOList, HttpStatus.OK);
     }
@@ -121,9 +120,9 @@ public class AnimalController {
     }
 
     @PutMapping("/animal")
-    public ResponseEntity<MiniAnimalDTO> updateAnimal(@RequestBody AddOrUpdateAnimalRequest animalRequest) {
+    public ResponseEntity<AnimalDTO> updateAnimal(@RequestBody AddOrUpdateAnimalRequest animalRequest) {
         try {
-            MiniAnimalDTO animalDTO = animalService.updateAnimal(animalRequest);
+            AnimalDTO animalDTO = animalService.updateAnimal(animalRequest);
             return new ResponseEntity<>(animalDTO, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

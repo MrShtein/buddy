@@ -2,8 +2,7 @@ package mr.shtein.buddy.services;
 
 import com.google.gson.Gson;
 
-import mr.shtein.buddy.models.Person;
-import mr.shtein.buddy.models.Role;
+import mr.shtein.buddy.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +15,6 @@ import java.util.Optional;
 
 import javax.servlet.http.Part;
 
-import mr.shtein.buddy.models.Avatar;
-import mr.shtein.buddy.models.Kennel;
 import mr.shtein.buddy.repository.KennelRepository;
 import mr.shtein.buddy.request.KennelPreviewResponse;
 import mr.shtein.buddy.request.KennelRequest;
@@ -29,6 +26,7 @@ public class KennelService {
     private final AnimalService animalService;
     private final PersonService personService;
     private final RoleService roleService;
+    private final CityService cityService;
     private final FilesStorageService filesStorageService;
     private final String DEFAULT_AVT_NAME = "default.jpeg";
     private final String NEW_ROLE_TXT = "ROLE_ADMIN";
@@ -37,12 +35,13 @@ public class KennelService {
 
     public KennelService(
             KennelRepository kennelRepository,
-            AnimalService animalService, PersonService personService, RoleService roleService, FilesStorageService filesStorageService
+            AnimalService animalService, PersonService personService, RoleService roleService, CityService cityService, FilesStorageService filesStorageService
     ) {
         this.kennelRepository = kennelRepository;
         this.animalService = animalService;
         this.personService = personService;
         this.roleService = roleService;
+        this.cityService = cityService;
         this.filesStorageService = filesStorageService;
     }
 
@@ -83,7 +82,8 @@ public class KennelService {
         String location = kennelRequest.getKennelCity();
         String cityIdStr = location.split(",")[0];
         Integer cityId = Integer.parseInt(cityIdStr);
-        kennel.setLocation(cityId);
+        City city = cityService.getCityById(cityId);
+        kennel.setCity(city);
 
         kennel.setPhoneNumber(kennelRequest.getKennelPhoneNum());
         kennel.setStreet(kennelRequest.getKennelStreet());
