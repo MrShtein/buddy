@@ -21,7 +21,7 @@ public class AnimalDTO {
     private String description;
     private String breed;
     private HashMap<String, String> characteristics = new HashMap<>();
-    private KennelDTO kennelDTO;
+    private KennelDTO kennel;
 
 
     public void from(Animal animal) {
@@ -32,7 +32,7 @@ public class AnimalDTO {
         age = animal.getApproximateAge();
         description = animal.getDescription();
         breed = animal.getBreed().getName();
-        kennelDTO = getKennelDTO(animal.getKennel());
+        kennel = getKennel(animal.getKennel());
 
         List<Characteristic> characteristicList = animal.getCharacteristics();
         for (Characteristic current : characteristicList) {
@@ -42,7 +42,7 @@ public class AnimalDTO {
         imgUrl = getAnimalPhotoDTOList(animal);
     }
 
-    private KennelDTO getKennelDTO(Kennel kennel) {
+    private KennelDTO getKennel(Kennel kennel) {
         KennelDTO kennelDTO = new KennelDTO();
         kennelDTO.from(kennel);
         return kennelDTO;
