@@ -6,7 +6,7 @@ import mr.shtein.buddy.models.Kennel;
 
 public class KennelDTO {
 
-    private long id;
+    private Integer id;
     private String name;
     private String address;
     private String phoneNumber;
