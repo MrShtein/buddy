@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import lombok.Data;
-import mr.shtein.buddy.models.Animal;
-import mr.shtein.buddy.models.AnimalPhoto;
-import mr.shtein.buddy.models.Characteristic;
-import mr.shtein.buddy.models.Kennel;
+import mr.shtein.buddy.models.*;
 
 @Data
 public class AnimalDTO {
@@ -51,11 +48,16 @@ public class AnimalDTO {
     private List<AnimalPhotoDTO> getAnimalPhotoDTOList(Animal animal) {
         List<AnimalPhoto> photoList = animal.getAnimalPhotos();
         List<AnimalPhotoDTO> photoDTOList = new ArrayList<>();
-        photoList.forEach(photo -> {
-           AnimalPhotoDTO currentPhotoDTO = new AnimalPhotoDTO();
-           currentPhotoDTO.from(photo);
-           photoDTOList.add(currentPhotoDTO);
-        });
+        photoList.stream()
+                .filter(photo -> {
+                    return photo.getStatus() == PhotoStatus.ACTIVE;
+                })
+                .forEach(photo -> {
+                    AnimalPhotoDTO currentPhotoDTO = new AnimalPhotoDTO();
+                    currentPhotoDTO.from(photo);
+                    photoDTOList.add(currentPhotoDTO);
+                });
+
         return photoDTOList;
     }
 }
