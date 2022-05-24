@@ -28,7 +28,7 @@ public class Breed {
     @Column(name = "breed_id", nullable = false)
     private Integer id;
 
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
     @ManyToOne(optional = false)
