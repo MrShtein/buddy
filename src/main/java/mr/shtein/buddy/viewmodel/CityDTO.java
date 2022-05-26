@@ -9,7 +9,7 @@ import mr.shtein.buddy.models.City;
 @Getter
 @NoArgsConstructor
 public class CityDTO {
-    private Long city_id;
+    private Integer city_id;
     private String name;
     private String region;
 

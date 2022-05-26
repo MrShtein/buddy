@@ -18,7 +18,7 @@ public class City {
 
     @Id
     @Column(name = "city_id", nullable = false)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", length = 50)
     private String name;
