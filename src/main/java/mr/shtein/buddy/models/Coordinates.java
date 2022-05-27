@@ -5,8 +5,8 @@ public class Coordinates {
     private Double longitude;
 
     public Coordinates(Double latitude, Double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.latitude = latitude * Math.PI / 180;
+        this.longitude = longitude * Math.PI / 180;
     }
 
     public Double getLatitude() {

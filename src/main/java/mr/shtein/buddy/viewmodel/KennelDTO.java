@@ -14,6 +14,8 @@ public class KennelDTO {
     private String avatarUrl;
     private Coordinates coordinates;
 
+    private String distanceByUser;
+
     public void from(Kennel kennel) {
         id = kennel.getId();
         name = kennel.getName();
@@ -64,5 +66,9 @@ public class KennelDTO {
             sb.append(kennel.getBuilding());
         }
         return sb.toString();
+    }
+
+    public void setDistanceByUser(String distanceByUser) {
+        this.distanceByUser = distanceByUser;
     }
 }
