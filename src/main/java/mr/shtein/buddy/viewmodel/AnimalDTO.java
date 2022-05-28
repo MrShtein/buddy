@@ -20,6 +20,8 @@ public class AnimalDTO {
     private HashMap<String, String> characteristics = new HashMap<>();
     private KennelDTO kennel;
 
+    private String distance;
+
 
     public void from(Animal animal) {
         id = animal.getId();
@@ -30,6 +32,7 @@ public class AnimalDTO {
         description = animal.getDescription();
         breed = animal.getBreed().getName();
         kennel = getKennel(animal.getKennel());
+        distance = "";
 
         List<Characteristic> characteristicList = animal.getCharacteristics();
         for (Characteristic current : characteristicList) {
