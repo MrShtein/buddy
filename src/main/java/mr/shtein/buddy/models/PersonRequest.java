@@ -14,7 +14,7 @@ public class PersonRequest {
     private String name;
     private String surname;
     private String gender;
-    private Long city_id;
+    private Integer city_id;
     private String phoneNumber;
     private String email;
     private String password;
