@@ -178,6 +178,7 @@ public class AnimalService {
         });
 
         saveImages(animalRequest, animal);
+        animalRepository.save(animal);
         AnimalDTO miniAnimalDTO = new AnimalDTO();
         miniAnimalDTO.from(animal);
         return miniAnimalDTO;
