@@ -1,5 +1,6 @@
 package mr.shtein.buddy.controllers;
 
+import mr.shtein.buddy.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import mr.shtein.buddy.access.JwtTokenProvider;
-import mr.shtein.buddy.models.LoginInfo;
-import mr.shtein.buddy.models.LoginRequest;
-import mr.shtein.buddy.models.LoginResponse;
-import mr.shtein.buddy.models.PasswordCheckRequest;
-import mr.shtein.buddy.models.Person;
-import mr.shtein.buddy.models.RegistrationRequest;
 import mr.shtein.buddy.services.RegistrationService;
 import mr.shtein.buddy.services.PersonService;
 
@@ -62,6 +57,15 @@ public class AuthController {
             String roleName = user.getRole().getRoleName();
             String token = jwtTokenProvider.createAuthToken(username, roleName);
 
+            StringBuilder sb = new StringBuilder();
+            City city = user.getCity();
+            sb.append(city.getId())
+                    .append(",")
+                    .append(city.getName())
+                    .append(",")
+                    .append(city.getRegion());
+
+            loginInfo.setCityInfo(sb.toString());
             loginInfo.setId(user.getId());
             loginInfo.setRole(roleName);
             loginInfo.setToken(token);

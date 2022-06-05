@@ -116,10 +116,11 @@ public class Person implements UserDetails {
         return enabled;
     }
 
-    public Person(RegistrationRequest registrationRequest) {
+    public Person(RegistrationRequest registrationRequest, City city) {
         this.email = registrationRequest.getEmail();
         this.password = registrationRequest.getPassword();
         this.name = registrationRequest.getName();
+        this.city = city;
         this.setEnabled(true);
     }
 }
