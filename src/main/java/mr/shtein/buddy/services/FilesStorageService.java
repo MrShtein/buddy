@@ -50,6 +50,8 @@ public class FilesStorageService {
     public String addNewKennelAvatar(Part avatarPart) throws IOException {
         String uniqueFileName = UUID.randomUUID().toString();
         String fileExtension = avatarPart.getContentType().split("/")[1];
+        String pathToFolder = mainPath + imagesPath + kennelAvatarPath;
+        Files.createDirectories(Path.of(pathToFolder));
         String pathBuilder =
                 mainPath +
                         imagesPath +
