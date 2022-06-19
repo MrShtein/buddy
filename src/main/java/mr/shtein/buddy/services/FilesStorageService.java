@@ -89,8 +89,8 @@ public class FilesStorageService {
 
         for (String fileName: fileNames) {
             String pathForNewFolder = mainPath + imagesPath + animalPath + currentDate;
+            Files.createDirectories(Path.of(pathForNewFolder));
             String pathToTmpFolder = mainPath + imagesPath + tmpFolder;
-            makeDirectoryIfNotExist(pathForNewFolder);
             String pathForDb = currentDate + "/" + fileName;
             String pathForFile = pathForNewFolder + "/" + fileName;
             paths.add(pathForDb);
@@ -106,13 +106,6 @@ public class FilesStorageService {
             Path pathToDel = Path.of(pathToExtraPhotos + fileName);
             Files.deleteIfExists(pathToDel);
         };
-    }
-
-    private void makeDirectoryIfNotExist(String path) {
-        File folder = new File(path);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
     }
 
 }
