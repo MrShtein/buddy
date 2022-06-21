@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -21,17 +22,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import mr.shtein.buddy.exception.InvalidJwtAuthenticationException;
+import mr.shtein.buddy.repository.PersonRepository;
 import mr.shtein.buddy.services.PersonService;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private PersonService personService;
-
+    private PersonRepository personRepository;
     @Autowired
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
+    public JwtTokenProvider(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
 
     @Value("${auth.secret}")
@@ -66,7 +67,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.personService.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = personRepository.findByEmail(getUsername(token)).orElseThrow(() -> new UsernameNotFoundException("User not found"));;
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
