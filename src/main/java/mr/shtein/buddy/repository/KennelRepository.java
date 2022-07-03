@@ -7,5 +7,6 @@ import java.util.List;
 import mr.shtein.buddy.models.Kennel;
 
 public interface KennelRepository extends CrudRepository<Kennel, Integer> {
+    List<Kennel> findAllByIsValidTrue();
     List<Kennel> findAllByAdministratorID(Long personId);
 }

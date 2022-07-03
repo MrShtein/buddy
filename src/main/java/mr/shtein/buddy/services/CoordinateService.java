@@ -20,7 +20,7 @@ public class CoordinateService {
 
     public HashMap<Integer, Integer> getAllDistances(Double latitude, Double longitude) {
         DistanceCalculator distanceCalculator = new DistanceCalculator();
-        Iterable<Kennel> kennels = kennelRepository.findAll();
+        Iterable<Kennel> kennels = kennelRepository.findAllByIsValidTrue();
         HashMap<Integer, Integer> distances = new HashMap<>();
         kennels.forEach(kennel -> {
             Coordinates kennelCoordinates = new Coordinates(kennel.getLatitude(), kennel.getLongitude());
