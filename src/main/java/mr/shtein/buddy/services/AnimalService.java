@@ -52,7 +52,7 @@ public class AnimalService {
     }
 
     public List<Animal> getAll() {
-        Iterable<Animal> animalsIter = animalRepository.findAllByStatusOrderByIdAsc(AnimalStatus.ACTIVE);
+        Iterable<Animal> animalsIter = animalRepository.findAllByStatusOrderByIdDesc(AnimalStatus.ACTIVE);
         ArrayList<Animal> animals = new ArrayList<>();
         animalsIter.forEach(animals::add);
         return animals;
